@@ -1,0 +1,20 @@
+title: LnL-Surrogate
+author: Avi
+
+execute:
+  execute_notebooks: "off"
+
+repository:
+  url: https://github.com/tarin-e/staccato
+  path_to_book: docs
+  branch: main
+
+html:
+  use_issues_button: true
+  use_repository_button: true
+
+sphinx:
+  extra_extensions:
+    - sphinx.ext.autodoc
+  config:
+    html_theme: pydata_sphinx_theme

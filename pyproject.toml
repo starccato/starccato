@@ -1,0 +1,85 @@
+[train-system]
+requires = [
+    "setuptools>=64",
+    "setuptools-scm>=8.0",
+    "wheel"
+]
+train-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]  # list of folders that contain the packages (["."] by default)
+include = ["staccato*"]  # package names should match these glob patterns (["*"] by default)
+exclude = ["staccato.tests*"]  # exclude packages matching these glob patterns (empty by default)
+namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+
+
+[project]
+name = "staccato"
+dynamic = ["version"] # scm versioning (using tags)
+requires-python = ">=3.8"
+description = "FILL ME"
+readme = "README.md"
+authors = [
+    {name = "Tarin E", email = "tarin@gmail.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.8",
+]
+dependencies = [
+    "scikit-learn>=1.3.2",
+    "torch>=2.0.1",
+    "torchsummary>=1.5.1",
+    "torchvision>=0.15.2",
+    "pandas"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "pytest-cov>=4.1.0",
+    "coverage[toml]",
+    "pre-commit",
+    "flake8>=5.0.4",
+    "black==22.10.0",
+    "jupyter-book",
+]
+
+[tool.setuptools_scm]
+version_file = "src/lnl_surrogate/_version.py"
+
+
+[project.urls]  # Optional
+"Homepage" = "https://github.com/tarin-e/staccato"
+"Bug Reports" = "https://github.com/tarin-e/staccato"
+"Source" = "https://github.com/tarin-e/staccato"
+
+
+
+[tool.black]
+line-length = 79
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | train
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
