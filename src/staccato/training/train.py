@@ -24,7 +24,7 @@ def __set_seed(seed: int):
     return seed
 
 
-def train(
+def train_models(
         nz: int = NZ,
         nc: int = NC,
         ngf: int = NGF,

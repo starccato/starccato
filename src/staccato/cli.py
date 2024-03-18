@@ -1,26 +1,26 @@
 """This module provides the command line interface for the staccato package."""
 import click
 
-from .generator import generate_signals
+from .nn import generate_signals
+from .defaults import GENERATOR_WEIGHTS_FN
 
 
-@click
-.option(
+@click.option(
     "--n",
     default=1,
     help="The number of signals to generate.",
 )
-.option(
+@click.option(
     "--weights_file",
     default=GENERATOR_WEIGHTS_FN,
     help="The file containing the weights for the generator model.",
 )
-.option(
+@click.option(
     "--seed",
     default=None,
     help="The random seed to use when generating the signals.",
 )
-.option(
+@click.option(
     "--filename",
     default="signals.txt",
     help="The name of the file to save the generated signals to.",

@@ -1,10 +1,10 @@
-[train-system]
+[train_models-system]
 requires = [
     "setuptools>=64",
     "setuptools-scm>=8.0",
     "wheel"
 ]
-train-backend = "setuptools.build_meta"
+train_models-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]  # list of folders that contain the packages (["."] by default)
@@ -71,7 +71,7 @@ exclude = '''
   | \.venv
   | _build
   | buck-out
-  | train
+  | train_models
   | dist
 )/
 '''
