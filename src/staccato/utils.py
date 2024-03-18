@@ -32,8 +32,20 @@ def __download(url: str, fname: str) -> None:
 
 def get_device() -> torch.device:
     """This function returns the device to use for training/predicting."""
-    if torch.cuda.is_available():
-        return torch.device("cuda")
-    elif torch.mps.is_available():
-        return torch.device("mps")
+    try:
+        if torch.cuda.is_available():
+            return torch.device("cuda")
+        elif torch.mps.is_available():
+            return torch.device("mps")
+    except Exception as e:
+        pass
     return torch.device("cpu")
+
+
+def init_weights(m:torch.nn.Module) -> None:
+    """This function initialises the weights of the model."""
+    if type(m) == torch.nn.Conv1d or type(m) == torch.nn.ConvTranspose1d:
+        torch.nn.init.normal_(m.weight, 0.0, 0.02)
+    if type(m) == torch.nn.BatchNorm1d:
+        torch.nn.init.normal_(m.weight, 1.0, 0.02)
+        torch.nn.init.zeros_(m.bias)

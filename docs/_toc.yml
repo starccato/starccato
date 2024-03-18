@@ -1,5 +1,6 @@
 format: jb-book
-root: README.md
+root: index.md
 chapters:
-- file: studies/example.ipynb
-- file: studies/acquisition_functions.md
+- file: training.ipynb
+- file: signal_generation.ipynb
+- file: paper_plots.ipynb

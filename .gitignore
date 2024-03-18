@@ -7,6 +7,7 @@ __pycache__/
 out_test
 *.csv
 *.pt
+*.DS_Store
 
 # C extensions
 *.so

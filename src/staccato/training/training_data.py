@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import math
 from typing import Optional, Tuple
 
+from ..defaults import BATCH_SIZE
+
 # TODO: @tarin-e, save these on the zenodo as well.
 SIGNALS_CSV = "https://raw.githubusercontent.com/tarin-e/gw-generative-models/main/data/input/richers_1764.csv"
 PARAMETERS_CSV = "https://raw.githubusercontent.com/tarin-e/gw-generative-models/main/data/input/richers_1764_parameters.csv"
@@ -13,30 +15,28 @@ TIME_CSV = "https://raw.githubusercontent.com/tarin-e/gw-generative-models/main/
 
 
 class TrainingData(Dataset):
-    def __init__(self, signals_csv=SIGNALS_CSV, parameters_csv=PARAMETERS_CSV):
+    def __init__(self, signals_csv=SIGNALS_CSV, parameters_csv=PARAMETERS_CSV, batch_size=BATCH_SIZE, frac=1):
         ### read data from csv files
-        parameters = pd.read_csv(parameters_csv)
-        self.signals = pd.read_csv(signals_csv).astype('float32')
+        self.parameters = pd.read_csv(parameters_csv)
+        self.signals = pd.read_csv(signals_csv).astype('float32').T
+        self.signals.index = [i for i in range(len(self.signals.index))]
+
+        assert self.signals.shape[0] == self.parameters.shape[0], "Signals and parameters must have the same number of rows (the number of signals)"
+
+
+        if frac < 1:
+            init_shape = self.signals.shape
+            n_signals = int(frac * self.signals.shape[0])
+            # keep n_signals random signals columns
+            self.signals = self.signals.sample(n=n_signals, axis=0)
+            self.parameters = self.parameters.iloc[self.signals.index, :]
+            print(f"Frac of TrainingData being used {init_shape} -> {self.signals.shape}")
+
         # remove unusual parameters
-        keep_signals_idx = np.array(parameters[parameters['beta1_IC_b'] > 0].index)
-        parameters = parameters.iloc[:, :]
-        ###
-
-        ### process beta_ic_b parameter
-        # ranges = [0, 0.06, 0.17, 1]
-        # labels = [0, 1, 2]
-        # num_classes = len(labels)
-        # y = y['beta1_IC_b']
-        # y = pd.cut(y, bins=ranges, labels=labels).astype('int')
-        # y = y.values
-        # y = np.eye(num_classes)[y]
-        # y = np.reshape(y, (y.shape[0], y.shape[1], 1)).astype('float32')
-        self.parameters = parameters
-        ###
-
-        # drop corresponding signals which have erroneous parameter values
-        self.signals = self.signals.iloc[:, keep_signals_idx]
-        self.signals = self.signals.values
+        keep_idx = self.parameters['beta1_IC_b'] > 0
+        self.parameters = self.parameters[keep_idx]
+        self.signals = self.signals[keep_idx]
+        self.signals = self.signals.values.T
         self.augmented_signals = np.empty(shape=(256, 0)).astype('float32')
 
         ### flatten signals and take last 256 timestamps
@@ -49,6 +49,7 @@ class TrainingData(Dataset):
             cut_signal = signal[:, int(len(signal[0]) - 256):len(signal[0])]
             temp_data = np.insert(temp_data, temp_data.shape[1], cut_signal, axis=1)
 
+        self.batch_size = batch_size
         self.signals = temp_data
         self.mean = self.signals.mean()
         self.std = np.std(self.signals, axis=None)
@@ -140,7 +141,6 @@ class TrainingData(Dataset):
         str += f"Signal Dataset shape: {self.signals.shape}\n"
         print(str)
 
-
     def standardize(self, signal):
         standardized_signal = (signal - self.mean) / self.std
         standardized_signal = standardized_signal / self.scaling_factor
@@ -183,6 +183,10 @@ class TrainingData(Dataset):
     def __len__(self):
         return self.signals.shape[1]
 
+    @property
+    def shape(self):
+        return self.signals.shape
+
     def __getitem__(self, idx):
         signal = self.signals[:, idx]
         signal = signal.reshape(1, -1)
@@ -191,8 +195,8 @@ class TrainingData(Dataset):
 
         return signal_standardized
 
-    def get_loader(self, batch_size: int = 32) -> DataLoader:
-        return DataLoader(self, batch_size=batch_size, shuffle=True, num_workers=0)
+    def get_loader(self) -> DataLoader:
+        return DataLoader(self, batch_size=self.batch_size, shuffle=True, num_workers=0)
 
     def get_signals_iterator(self):
         return next(iter(self.get_loader()))
@@ -224,11 +228,9 @@ class TrainingData(Dataset):
             ax.set_xlabel('n (timestamps)')
             ax.set_xlim(min(x), max(x))
 
-
             # parameters = signal_iterator[i, :].numpy()[0]
             # parameters_with_names = f'{parameter_names[0]}: {parameters[0]:.6f}\n{parameter_names[1]}: {parameters[1]:.2f}, {parameter_names[2]}: {parameters[2]:.2f}'
             # ax.set_xlabel(f'Parameters:\n{parameters_with_names}')
-
 
         fig.suptitle('Waveforms')
         if standardised:
