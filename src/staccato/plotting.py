@@ -1,6 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import List, Tuple
+from matplotlib import rcParams
+
+
+def _config_rc_params():
+    rcParams['axes.grid'] = True
+    rcParams['axes.grid.which'] = 'both'
+
+
 
 
 def plot_waveforms(
