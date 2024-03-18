@@ -31,7 +31,7 @@ from sklearn.decomposition import PCA
 from torch.utils.data import DataLoader, Dataset
 from torchsummary import summary
 
-from .defaults import NC, NDF, NZ
+from ..defaults import NC, NDF, NZ
 
 
 class Discriminator(nn.Module):

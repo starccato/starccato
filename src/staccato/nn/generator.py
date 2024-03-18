@@ -25,9 +25,11 @@ from sklearn.decomposition import PCA
 from torch.utils.data import DataLoader, Dataset
 from torchsummary import summary
 
-from .defaults import NC, NGF, NZ
+from typing import Optional
 
-__all__ = ["Generator"]
+from ..defaults import NC, NGF, NZ, GENERATOR_WEIGHTS_FN
+
+__all__ = ["Generator", "generate_signals"]
 
 
 class Generator(nn.Module):
@@ -94,12 +96,28 @@ class Generator(nn.Module):
         return z
 
 
-
-
 def generate_signals(
-        weights_file: str,
-        n: int,
-        filename: str = None,
+        n: int = 1,
+        weights_file: Optional[str] = GENERATOR_WEIGHTS_FN,
+        seed: Optional[int] = None,
+        filename: Optional[str] = 'signals.txt',
 ):
-    """This function generates signals using the trained generator model."""
+    """This function generates signals using the trained generator model.
+
+    Args:
+        n: The number of signals to generate.
+        weights_file: The path to the weights file for the generator model.
+        seed: The random seed to use for generating the signals. Random if None.
+        filename: The name of the txt file to save the generated signals to.
+    """
+
+    if seed is not None:
+        random.seed(seed)
+        torch.manual_seed(seed)
+
+
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
 
