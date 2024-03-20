@@ -35,7 +35,8 @@ dependencies = [
     "torchsummary>=1.5.1",
     "torchvision>=0.15.2",
     "pandas",
-    "click"
+    "click",
+    "loguru"
 ]
 
 [project.optional-dependencies]

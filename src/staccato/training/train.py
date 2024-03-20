@@ -13,6 +13,7 @@ from tqdm.auto import trange, tqdm
 import time
 from torch import nn, optim
 from typing import List, NamedTuple
+from ..logger import logger
 
 from torch.optim import lr_scheduler
 from ..defaults import NC, NGF, NZ, BATCH_SIZE, NDF
@@ -99,7 +100,7 @@ class Trainer:
     def train(self):
         self.plot_signals("before_training")
         t0 = time.time()
-        print(
+        logger.info(
             f"Starting Training Loop "
             f"[Epochs: {self.num_epochs}, "
             f"Train Size: {self.dataset.shape}, "
@@ -127,7 +128,7 @@ class Trainer:
             self.plot_signals(f"signals_epoch_{epoch}")
 
         runtime = (time.time() - t0) / 60
-        print(f"Training Time: {runtime:.2f}min")
+        logger.info(f"Training Time: {runtime:.2f}min")
 
 
         #
@@ -137,7 +138,7 @@ class Trainer:
         generator_weights_fn = f"{self.outdir}/generator_weights.pt"
 
         torch.save(self.netG.state_dict(), generator_weights_fn)
-        print(f"Saved generator weights+state to {generator_weights_fn}")
+        logger.info(f"Saved generator weights+state to {generator_weights_fn}")
         # return netG, netD
 
     def _update_discriminator(self, data):
@@ -200,5 +201,5 @@ class Trainer:
         before_lr = optimizer.param_groups[0]["lr"]
         scheduler.step()
         after_lr = optimizer.param_groups[0]["lr"]
-        print(f"SGD {label} lr {before_lr:.7f} -> {after_lr:.7f}")
+        logger.info(f"SGD {label} lr {before_lr:.7f} -> {after_lr:.7f}")
         return after_lr

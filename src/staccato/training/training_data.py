@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from typing import Optional, Tuple
+from ..logger import logger
 
 from ..defaults import BATCH_SIZE
 
@@ -21,8 +22,10 @@ class TrainingData(Dataset):
         self.signals = pd.read_csv(signals_csv).astype('float32').T
         self.signals.index = [i for i in range(len(self.signals.index))]
 
-        assert self.signals.shape[0] == self.parameters.shape[0], "Signals and parameters must have the same number of rows (the number of signals)"
-
+        assert (
+            self.signals.shape[0] == self.parameters.shape[0],
+            "Signals and parameters must have the same number of rows (the number of signals)"
+        )
 
         if frac < 1:
             init_shape = self.signals.shape
@@ -30,7 +33,7 @@ class TrainingData(Dataset):
             # keep n_signals random signals columns
             self.signals = self.signals.sample(n=n_signals, axis=0)
             self.parameters = self.parameters.iloc[self.signals.index, :]
-            print(f"Frac of TrainingData being used {init_shape} -> {self.signals.shape}")
+            logger.info(f"Frac of TrainingData being used {init_shape} -> {self.signals.shape}")
 
         # remove unusual parameters
         keep_idx = self.parameters['beta1_IC_b'] > 0
@@ -139,7 +142,7 @@ class TrainingData(Dataset):
         str = f"Signal Dataset mean: {self.mean:.3f} +/- {self.std:.3f}\n"
         str += f"Signal Dataset scaling factor (to match noise in generator): {self.scaling_factor}\n"
         str += f"Signal Dataset shape: {self.signals.shape}\n"
-        print(str)
+        logger.info(str)
 
     def standardize(self, signal):
         standardized_signal = (signal - self.mean) / self.std
@@ -176,8 +179,8 @@ class TrainingData(Dataset):
                                                   augmented_parameter, axis=0)
             self.parameters = np.insert(self.parameters, self.parameters.shape[0], augmented_parameter, axis=0)
 
-        print("Signal Dataset Size after Data Augmentation: ", self.signals.shape)
-        print("Parameter Dataset Size after Data Augmentation: ", self.parameters.shape)
+        logger.info(f"Signal Dataset Size after Data Augmentation: {self.signals.shape}")
+        logger.info(f"Parameter Dataset Size after Data Augmentation: {self.parameters.shape}")
 
     ### overloads ###
     def __len__(self):

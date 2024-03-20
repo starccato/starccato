@@ -6,6 +6,7 @@ from ..utils import get_device
 from typing import Optional
 import random
 import torch
+from ..logger import logger
 
 
 def _load_generator(weights_file: str = None) -> Generator:
@@ -41,4 +42,4 @@ def generate_signals(
     with open(filename, 'w') as f:
         for signal in signals:
             f.write(f"{signal}\n")
-    print(f"Generated {n} signals and saved to {filename}")
+    logger.info(f"Generated {n} signals and saved to {filename}")

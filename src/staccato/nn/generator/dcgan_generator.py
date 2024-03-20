@@ -1,5 +1,5 @@
 import torch.nn as nn
-from ..defaults import NC, NGF, NZ
+from ...defaults import NC, NGF, NZ
 
 __all__ = ["Generator"]
 

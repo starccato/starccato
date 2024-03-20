@@ -1,5 +1,5 @@
 import torch.nn as nn
-from ..defaults import NC, NDF, NZ
+from ...defaults import NC, NDF, NZ
 
 
 class Discriminator(nn.Module):
