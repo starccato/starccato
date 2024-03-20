@@ -1,6 +1,7 @@
 from staccato.nn import generate_signals
 import os
 
+
 def test_cli_generate(cli_runner):
     result = cli_runner.invoke(generate_signals, ["--n", "10"])
     assert result.exit_code == 0

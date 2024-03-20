@@ -34,12 +34,14 @@ dependencies = [
     "torch>=2.0.1",
     "torchsummary>=1.5.1",
     "torchvision>=0.15.2",
-    "pandas"
+    "pandas",
+    "click"
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=6.0",
+    "pytest-click",
     "pytest-cov>=4.1.0",
     "coverage[toml]",
     "pre-commit",

@@ -1,26 +1,17 @@
 import torch
-from tqdm.auto import tqdm
-from .defaults import GENERATOR_WEIGHTS_FN
 import requests
 from tqdm.auto import tqdm
-from urllib.parse import urlparse
-from pathlib import Path
-
-ZENODO_URL = "https://zenodo.org/record/1234567/files/weights.h5"
 
 
-def download_default_generator_weights() -> None:
-    """This function downloads the weights for the generator model from Zenodo."""
-    __download(ZENODO_URL, GENERATOR_WEIGHTS_FN)
-
-
-def __download(url: str, fname: str) -> None:
+def __download(url: str, fname: str, msg: str = "Downloading") -> None:
     response = requests.get(url, stream=True)
     response.raise_for_status()
     total_size_in_bytes = int(response.headers.get('content-length', 0))
     block_size = 1024  # 1 Kibibyte
-    progress_bar = tqdm(total=total_size_in_bytes, unit='iB', unit_scale=True, desc="Downloading",
-                        dynamic_ncols=True)
+    progress_bar = tqdm(
+        total=total_size_in_bytes, unit='iB', unit_scale=True, desc=msg,
+        dynamic_ncols=True
+    )
     with open(fname, 'wb') as file:
         for data in response.iter_content(block_size):
             progress_bar.update(len(data))
@@ -42,7 +33,7 @@ def get_device() -> torch.device:
     return torch.device("cpu")
 
 
-def init_weights(m:torch.nn.Module) -> None:
+def init_weights(m: torch.nn.Module) -> None:
     """This function initialises the weights of the model."""
     if type(m) == torch.nn.Conv1d or type(m) == torch.nn.ConvTranspose1d:
         torch.nn.init.normal_(m.weight, 0.0, 0.02)

@@ -1,16 +1,24 @@
 from .generator import Generator
 from .discriminator import Discriminator
 
+from ..defaults import get_default_weights_path
 from ..utils import get_device
-from ..defaults import GENERATOR_WEIGHTS_FN
 from typing import Optional
 import random
 import torch
 
 
+def _load_generator(weights_file: str = None) -> Generator:
+    """This function loads the generator model from the weights file."""
+    if weights_file is None:
+        weights_file = get_default_weights_path()
+    gen = torch.load(weights_file)
+    return gen
+
+
 def generate_signals(
         n: int = 1,
-        weights_file: Optional[str] = GENERATOR_WEIGHTS_FN,
+        weights_file: Optional[str] = None,
         seed: Optional[int] = None,
         filename: Optional[str] = 'signals.txt',
 ):
@@ -27,11 +35,8 @@ def generate_signals(
         random.seed(seed)
         torch.manual_seed(seed)
 
-    device = get_device()
-    netG = Generator().to(device)
-    netG.load_state_dict(torch.load(weights_file))
-
-    signals = netG.generate(n)
+    gen = _load_generator(weights_file)
+    signals = gen.generate(n)
 
     with open(filename, 'w') as f:
         for signal in signals:
