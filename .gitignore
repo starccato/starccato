@@ -11,6 +11,8 @@ out_test
 
 # C extensions
 *.so
+*.png
+*txt
 
 # Distribution / packaging
 .Python

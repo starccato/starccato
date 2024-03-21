@@ -1,6 +1,8 @@
 import torch
 import requests
-from tqdm.auto import tqdm
+import loguru
+from tqdm import tqdm
+
 
 
 def __download(url: str, fname: str, msg: str = "Downloading") -> None:
@@ -40,3 +42,8 @@ def init_weights(m: torch.nn.Module) -> None:
     if type(m) == torch.nn.BatchNorm1d:
         torch.nn.init.normal_(m.weight, 1.0, 0.02)
         torch.nn.init.zeros_(m.bias)
+
+def config_logger():
+    logger_format = "{time:DD-MM-YY HH:mm:ss}|<green>STACCATO</green>|{level}| <level>{message}</level>"
+    loguru.logger.configure(handlers=[dict(sink=lambda msg: tqdm.write(msg, end=''), format=logger_format, colorize=True)])
+    return loguru.logger

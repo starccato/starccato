@@ -1,10 +1,9 @@
-from staccato.training import TrainingData, train_models
+from staccato.training import TrainingData
 import os
 from unittest.mock import Mock
 import pytest
-
-from staccato.nn import generate_signals
-
+from staccato.training import train
+from staccato.generate_signals import generate_signals
 
 def test_training_data(tmpdir):
     training_data = TrainingData()
@@ -19,14 +18,14 @@ def test_training_data(tmpdir):
 @pytest.fixture
 def mock_training_data(monkeypatch):
     mock = Mock()
-    monkeypatch.setattr("staccato.training.train.TrainingData", mock)
+    monkeypatch.setattr("staccato.training.trainer.TrainingData", mock)
     mock.return_value = TrainingData(frac=0.002, batch_size=1)
     return mock
 
 
 def test_training(mock_training_data, tmpdir):
     train_outdir = f"{tmpdir}/train_outdir"
-    train_models(outdir=train_outdir, num_epochs=1)
+    train(outdir=train_outdir, num_epochs=1)
     assert os.path.exists(train_outdir)
     weights_fn = f"{train_outdir}/generator_weights.pt"
     assert os.path.exists(weights_fn)

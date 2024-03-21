@@ -86,3 +86,7 @@ line_length = 79
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[project.scripts]
+staccato_generate = "staccato.cli:cli_generate"
+staccato_train = "staccato.cli:cli_train"

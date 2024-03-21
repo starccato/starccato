@@ -4,16 +4,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-from ..nn import Discriminator, Generator
-from ..utils import init_weights, get_device
+from ..nn import Discriminator, Generator, save_model
+from ..utils import init_weights
 from .training_data import TrainingData
 from ..plotting import plot_signals_from_latent_vector, plot_gradients, plot_loss
-
+from ..defaults import DEVICE
 from tqdm.auto import trange, tqdm
 import time
 from torch import nn, optim
 from typing import List, NamedTuple
-from ..logger import logger
+from .. import logger
 
 from torch.optim import lr_scheduler
 from ..defaults import NC, NGF, NZ, BATCH_SIZE, NDF
@@ -26,10 +26,6 @@ def _set_seed(seed: int):
     torch.manual_seed(seed)
     torch.use_deterministic_algorithms(True)  # Needed for reproducible results
     return seed
-
-
-TRAIN_METADATA = namedtuple("TrainMetadata", "epoch g_loss d_loss g_gradient d_gradient")
-
 
 class Trainer:
     def __init__(
@@ -44,6 +40,7 @@ class Trainer:
             lr_g=0.00002,
             lr_d=0.00002,
             beta1=0.5,
+            checkpoint_interval=16,
             outdir: str = "outdir"
     ):
         self.nz = nz
@@ -57,16 +54,16 @@ class Trainer:
         self.lr_d = lr_d
         self.beta1 = beta1
         self.outdir = outdir
-        self.device = get_device()
         self.dataset = TrainingData(batch_size=batch_size)
+        self.checkpoint_interval = checkpoint_interval
 
         os.makedirs(outdir, exist_ok=True)
         _set_seed(self.seed)
 
         # setup networks
-        self.netG = Generator(nz=nz, ngf=ngf, nc=nc).to(self.device)
+        self.netG = Generator(nz=nz, ngf=ngf, nc=nc).to(DEVICE)
         self.netG.apply(init_weights)
-        self.netD = Discriminator(nz=nz, ndf=ndf, nc=nc).to(self.device)
+        self.netD = Discriminator(nz=nz, ndf=ndf, nc=nc).to(DEVICE)
         self.netD.apply(init_weights)
 
         # setup optimisers
@@ -78,10 +75,10 @@ class Trainer:
         self.criterion = nn.BCELoss()
 
         # cache a latent-vector for visualisation/testing
-        self.fixed_noise = torch.randn(batch_size, nz, 1, device=self.device)
+        self.fixed_noise = torch.randn(batch_size, nz, 1, device=DEVICE)
 
         # Lists to keep track of progress
-        self.train_metadata: List[TRAIN_METADATA] = []
+        self.train_metadata: TrainMetadata = TrainMetadata()
 
     @property
     def plt_kwgs(self):
@@ -97,58 +94,67 @@ class Trainer:
             **self.plt_kwgs
         )
 
+    def _prog_dict(self, loss_g, loss_d, lr_g, lr_d):
+        return {
+            "Loss(d,g)": f"[{loss_d:.2E}, {loss_g:.2E}]",
+            "LR(d,g)": f"[{lr_d:.2E}, {lr_g:.2E}]"
+        }
+
     def train(self):
         self.plot_signals("before_training")
         t0 = time.time()
         logger.info(
-            f"Starting Training Loop "
+            f"\nStarting Training Loop "
             f"[Epochs: {self.num_epochs}, "
             f"Train Size: {self.dataset.shape}, "
             f"Learning Rate: ({self.lr_g}, {self.lr_d})]"
         )
 
         dataloader = self.dataset.get_loader()
-        # For each epoch
-        epoch_str = "Loss_D: %.4f, Loss_G: %.4f, Epochs:"
-        epoch_bar = trange(self.num_epochs, desc=epoch_str.format(np.nan.np.nan), position=0, leave=True)
+        epoch_bar = trange(self.num_epochs, desc="Epochs", position=0, leave=True)
+        epoch_bar.set_postfix(self._prog_dict(0, 0, self.lr_g, self.lr_d))
         for epoch in epoch_bar:
             for (i, data) in tqdm(enumerate(dataloader, 0), desc="Batch", position=1, leave=False,
                                   total=len(dataloader)):
                 errD, D_x, D_G_z1, _dgrad, fake, b_size = self._update_discriminator(data)
                 errG, D_G_z2, _ggrad = self._update_generator(b_size, fake)
                 if i % 50 == 0:
-                    epoch_bar.set_description(epoch_str % (errD.item(), errG.item()))
-                self.train_metadata.append(TRAIN_METADATA(epoch, errG.item(), errD.item(), _ggrad, _dgrad))
+                    epoch_bar.set_postfix(self._prog_dict(errG.item(), errD.item(), self.lr_g, self.lr_d))
+                itr = epoch * len(dataloader) + i
+                self.train_metadata.append(itr, errG.item(), errD.item(), _ggrad, _dgrad)
 
             # learning-rate decay
             self._decay_learning_rate(self.optimizerD, self.schedulerD, "Discriminator")
             self._decay_learning_rate(self.optimizerG, self.schedulerG, "Generator")
 
-            # intermediate plot
-            self.plot_signals(f"signals_epoch_{epoch}")
+            # @TODO save model+plots every N epochs
+            if epoch % self.checkpoint_interval == 0:
+                self.plot_signals(f"signals_epoch_{epoch}")
+                self.train_metadata.plot(f"{self.outdir}/training_metrics_epoch_{epoch}.png")
 
         runtime = (time.time() - t0) / 60
         logger.info(f"Training Time: {runtime:.2f}min")
+        self.plot_signals(f"signals_epoch_end")
+        self.train_metadata.plot(f"{self.outdir}/training_metrics_epoch_end.png")
+        self.save_models()
 
+    @property
+    def save_fname(self):
+        return f"{self.outdir}/generator_weights.pt"
 
-        #
-        # plot_gradients(D_gradients, "tab:red", "Discriminator", f"{self.outdir}/discriminator_gradients.png")
-        # plot_gradients(G_gradients, "tab:blue", "Generator", f"{self.outdir}/generator_gradients.png")
-        # plot_loss(G_losses, D_losses, f"{self.outdir}/losses.png")
-        generator_weights_fn = f"{self.outdir}/generator_weights.pt"
-
-        torch.save(self.netG.state_dict(), generator_weights_fn)
-        logger.info(f"Saved generator weights+state to {generator_weights_fn}")
-        # return netG, netD
+    def save_models(self):
+        save_model(self.netG, self.save_fname)
+        logger.info(f"Saved model to {self.save_fname}")
+        # @TODO save discriminator ?
 
     def _update_discriminator(self, data):
         """Update D network: maximize log(D(x)) + log(1 - D(G(z)))"""
         ## Train with all-real batch
         self.netD.zero_grad()
         # Format batch
-        real_gpu = data.to(self.device)
+        real_gpu = data.to(DEVICE)
         b_size = real_gpu.size(0)
-        label_real = torch.FloatTensor(b_size).uniform_(1.0, 1.0).to(self.device)
+        label_real = torch.FloatTensor(b_size).uniform_(1.0, 1.0).to(DEVICE)
         # Forward pass real batch through D
         output = self.netD(real_gpu).view(-1)
         # Calculate loss on all-real batch
@@ -159,10 +165,10 @@ class Trainer:
 
         ## Train with all-fake batch
         # Generate batch of latent vectors
-        noise = torch.randn(b_size, self.nz, 1, device=self.device)
+        noise = torch.randn(b_size, self.nz, 1, device=DEVICE)
         # Generate fake signal batch with G
         fake = self.netG(noise)
-        label_fake = torch.FloatTensor(b_size).uniform_(0.0, 0.25).to(self.device)
+        label_fake = torch.FloatTensor(b_size).uniform_(0.0, 0.25).to(DEVICE)
         # label_fake = torch.FloatTensor(b_size).uniform_(0.0, 0.0).to(device)
         # Classify all fake batch with D
         output = self.netD(fake.detach()).view(-1)
@@ -182,7 +188,7 @@ class Trainer:
     def _update_generator(self, b_size, fake):
         """Update G network: maximize log(D(G(z)))"""
         self.netG.zero_grad()
-        label_real = torch.FloatTensor(b_size).uniform_(1.0, 1.0).to(self.device)
+        label_real = torch.FloatTensor(b_size).uniform_(1.0, 1.0).to(DEVICE)
         # label_real = 1.0 - label_fake
         # Since we just updated D, perform another forward pass of all-fake batch through D
         output = self.netD(fake).view(-1)
@@ -201,5 +207,39 @@ class Trainer:
         before_lr = optimizer.param_groups[0]["lr"]
         scheduler.step()
         after_lr = optimizer.param_groups[0]["lr"]
-        logger.info(f"SGD {label} lr {before_lr:.7f} -> {after_lr:.7f}")
+        logger.debug(f"SGD {label} lr {before_lr:.7f} -> {after_lr:.7f}")
         return after_lr
+
+
+class TrainMetadata():
+    def __init__(self):
+        self.iter: List[int] = []
+        self.g_loss: List[float] = []
+        self.d_loss: List[float] = []
+        self.g_gradient: List[float] = []
+        self.d_gradient: List[float] = []
+
+    def append(self, iter, g_loss, d_loss, g_gradient, d_gradient):
+        self.iter.append(iter)
+        self.g_loss.append(g_loss)
+        self.d_loss.append(d_loss)
+        self.g_gradient.append(g_gradient)
+        self.d_gradient.append(d_gradient)
+
+    def plot(self, fname='training_metrics.png'):
+        fig, axes = plt.subplots(3, 1, figsize=(10, 6))
+        plot_gradients(self.d_gradient, "tab:red", "Discriminator", axes=axes[0])
+        plot_gradients(self.g_gradient, "tab:blue", "Generator", axes=axes[1])
+        plot_loss(
+            self.g_loss,
+            self.d_loss,
+            axes=axes[2]
+        )
+        plt.tight_layout()
+        plt.savefig(fname)
+
+
+def train(**kwargs):
+    trainer = Trainer(**kwargs)
+    trainer.train()
+    return trainer

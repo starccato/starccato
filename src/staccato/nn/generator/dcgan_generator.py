@@ -1,8 +1,12 @@
 import torch.nn as nn
+import torch
 from ...defaults import NC, NGF, NZ
 
 __all__ = ["Generator"]
 
+
+TRUE = 1
+FALSE = 0
 
 class Generator(nn.Module):
     def __init__(self, nz: int = NZ, ngf: int = NGF, nc: int = NC):
@@ -12,7 +16,7 @@ class Generator(nn.Module):
                 nz, ngf * 32, kernel_size=4, stride=1, padding=0, bias=False
             ),
             nn.BatchNorm1d(ngf * 32),
-            nn.LeakyReLU(True),
+            nn.LeakyReLU(TRUE),
             nn.ConvTranspose1d(
                 ngf * 32,
                 ngf * 16,
@@ -22,7 +26,7 @@ class Generator(nn.Module):
                 bias=False,
             ),
             nn.BatchNorm1d(ngf * 16),
-            nn.LeakyReLU(True),
+            nn.LeakyReLU(TRUE),
             nn.ConvTranspose1d(
                 ngf * 16,
                 ngf * 8,
@@ -32,7 +36,7 @@ class Generator(nn.Module):
                 bias=False,
             ),
             nn.BatchNorm1d(ngf * 8),
-            nn.LeakyReLU(True),
+            nn.LeakyReLU(TRUE),
             nn.ConvTranspose1d(
                 ngf * 8,
                 ngf * 4,
@@ -42,7 +46,7 @@ class Generator(nn.Module):
                 bias=False,
             ),
             nn.BatchNorm1d(ngf * 4),
-            nn.LeakyReLU(True),
+            nn.LeakyReLU(TRUE),
             nn.ConvTranspose1d(
                 ngf * 4,
                 ngf * 2,
@@ -52,7 +56,7 @@ class Generator(nn.Module):
                 bias=False,
             ),
             nn.BatchNorm1d(ngf * 2),
-            nn.LeakyReLU(True),
+            nn.LeakyReLU(TRUE),
             nn.ConvTranspose1d(
                 ngf * 2, ngf, kernel_size=4, stride=2, padding=1, bias=False
             ),

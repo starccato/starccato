@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from typing import Optional, Tuple
-from ..logger import logger
+from .. import logger
 
 from ..defaults import BATCH_SIZE
 
@@ -16,10 +16,10 @@ TIME_CSV = "https://raw.githubusercontent.com/tarin-e/gw-generative-models/main/
 
 
 class TrainingData(Dataset):
-    def __init__(self, signals_csv=SIGNALS_CSV, parameters_csv=PARAMETERS_CSV, batch_size=BATCH_SIZE, frac=1):
+    def __init__(self, batch_size=BATCH_SIZE, frac=1):
         ### read data from csv files
-        self.parameters = pd.read_csv(parameters_csv)
-        self.signals = pd.read_csv(signals_csv).astype('float32').T
+        self.parameters = pd.read_csv(PARAMETERS_CSV)
+        self.signals = pd.read_csv(SIGNALS_CSV).astype('float32').T
         self.signals.index = [i for i in range(len(self.signals.index))]
 
         assert (
@@ -58,6 +58,16 @@ class TrainingData(Dataset):
         self.std = np.std(self.signals, axis=None)
         self.scaling_factor = 5
         self.ylim_signal = (self.signals[:, :].min(), self.signals[:, :].max())
+
+    def __str__(self):
+        return f"TrainingData: {self.signals.shape}"
+
+    def __repr__(self):
+        return self.__str__()
+
+    @property
+    def raw_signals(self):
+        return pd.read_csv(SIGNALS_CSV).astype('float32').T.values
 
     ### augmentation methods ###
     def jittering_augmentation(self, signal):

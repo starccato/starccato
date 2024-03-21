@@ -1,14 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 from matplotlib import rcParams
 import torch
 from .nn import Generator
 
+# 1, 2, 3, sigmas
+SIGMA_QUANTS = [0.68, 0.95, 0.99]
+
 
 def _config_rc_params():
-    rcParams['axes.grid'] = True
-    rcParams['axes.grid.which'] = 'both'
+    rcParams['axes.grid'] = False
+    # rcParams['axes.grid.which'] = 'both'
 
 
 def plot_waveform_grid(
@@ -54,40 +57,93 @@ def plot_waveform_grid(
     return fig, axes
 
 
-def plot_gradients(gradients: List[float], color: str, label: str, fname: str):
+def plot_gradients(gradients: List[float], color: str, label: str, fname: str = None, axes: plt.Axes = None):
     # Get the total number of layers in the discriminator
     gradients = np.array(gradients)
     num_layers = gradients.shape[1]
 
     # Plot the gradients over training epochs
-    plt.figure(figsize=(10, 6))
+    if axes is None:
+        fig = plt.figure(figsize=(10, 6))
+        axes = fig.gca()
     for i in range(num_layers):
         # Calculate alpha value based on layer index
         alpha = 1 - (i / num_layers)  # Higher layers are more transparent
-        plt.plot(gradients[:, i], label=f'Layer {i}', alpha=alpha, color=color)
+        axes.plot(gradients[:, i], label=f'Layer {i}', alpha=alpha, color=color)
 
-    plt.xlabel('Batches')
-    plt.ylabel('Gradient Magnitude')
-    plt.title(f'{label} Gradients')
-    plt.legend()
+    axes.set_xlabel('Batches')
+    axes.set_ylabel('Gradient Magnitude')
+    axes.set_title(f'{label} Gradients')
+    axes.legend()
     plt.tight_layout()
-    plt.savefig(fname)
+    if fname:
+        plt.savefig(fname)
+    return axes.get_figure()
 
 
-def plot_loss(G_losses: List[float], D_losses: List[float], fname: str):
-    plt.figure(figsize=(10, 5))
-    plt.plot(G_losses, label="Generator Loss")
-    plt.plot(D_losses, label="Discriminator Loss")
-    plt.axhline(y=0.5, color='black', linestyle='--', alpha=0.5, label='Discriminator Loss Convergence Point')
-    plt.xlabel("Batch", size=20)
-    plt.ylabel("Loss", size=20)
-    plt.ylim(0, 5)
-    plt.legend(fontsize=16)
+def plot_loss(G_losses: List[float], D_losses: List[float], fname: str= None, axes: plt.Axes = None):
+    if axes is None:
+        fig = plt.figure(figsize=(10, 6))
+        axes = fig.gca()
+    axes.plot(G_losses, label="Generator Loss")
+    axes.plot(D_losses, label="Discriminator Loss")
+    axes.axhline(y=0.5, color='black', linestyle='--', alpha=0.5, label='Discriminator Loss Convergence Point')
+    axes.set_xlabel("Batch", size=20)
+    axes.set_ylabel("Loss", size=20)
+    axes.set_ylim(0, 5)
+    axes.legend(fontsize=16)
     plt.tight_layout()
-    plt.savefig(fname)
+    if fname:
+        plt.savefig(fname)
+    return axes.get_figure()
+
 
 
 def plot_signals_from_latent_vector(generator: Generator, latent_vector: torch.Tensor, fname: str, **plt_kwgs):
     with torch.no_grad():
         fake_signals = generator(latent_vector).detach().cpu()
         plot_waveform_grid(fake_signals, fname=fname, **plt_kwgs)
+
+
+def plot_signals_ci(signals: np.ndarray, color: str, quantiles: Optional[Tuple[float, float]] = [0.68, 0.95, 0.99]):
+    """Plot the mean and confidence interval of the signals."""
+    quant_pairs = [
+        (0.5 - 0.5 * q, 0.5 + 0.5 * q) for q in quantiles
+    ]
+    x = np.arange(signals.shape[1])
+
+    fig = plt.figure(figsize=(10, 6))
+    for i, q in enumerate(quant_pairs):
+        quants = np.quantile(signals, q, axis=0)
+        plt.fill_between(
+            x, quants[0], quants[1], alpha=0.3 * i, color=color
+        )
+    return fig
+
+def overplot_signals(signals: np.ndarray, color: str, axes: plt.Axes = None, alpha=0.001):
+    """Overplot the signals."""
+    if axes is None:
+        fig, axes = plt.subplots()
+    else:
+        fig = axes.get_figure()
+
+    for s in signals:
+        axes.plot(s, color=color, alpha=alpha)
+    return fig
+
+
+def plot_stacked_signals(signals: np.ndarray, cmap: str = 'inferno', axes: plt.Axes = None, norm='linear'):
+    """Plot the stacked signals."""
+    if axes is None:
+        fig, axes = plt.subplots()
+    else:
+        fig = axes.get_figure()
+
+    im = axes.imshow(signals, cmap=cmap, aspect='auto', norm=norm)
+    cbar = fig.colorbar(im, ax=axes)
+    # xlabel time
+    # ylabel signal number
+    axes.set_xlabel('Time')
+    axes.set_ylabel('Signal Number')
+    cbar.set_label('distance x strain (cm)')
+    return fig

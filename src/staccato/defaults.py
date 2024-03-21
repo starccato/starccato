@@ -1,6 +1,6 @@
 """Defaults for the staccato package."""
 import os
-from .utils import __download
+from .utils import __download, get_device
 
 NZ = 100
 NC = 1
@@ -8,7 +8,7 @@ NGF = 64
 NDF = 64
 GENERATOR_WEIGHTS_FN = os.path.join(os.path.dirname(__file__), "default_weights.pt")
 BATCH_SIZE = 32
-
+DEVICE = get_device()
 ZENODO_URL = "https://sandbox.zenodo.org/records/38501/files/stellar_core_collapse_signal_generator_dcgans_normalised.pt?download=1"
 
 

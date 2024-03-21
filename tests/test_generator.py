@@ -1,14 +1,23 @@
-from staccato.nn import generate_signals
+from staccato.cli import cli_generate
+from staccato.generate_signals import generate_signals
+from staccato.defaults import NZ
 import os
+import numpy as np
 
 
-def test_cli_generate(cli_runner):
-    result = cli_runner.invoke(generate_signals, ["--n", "10"])
+def test_cli_generate(cli_runner, tmpdir):
+    fname = f"{tmpdir}/generated_signals.txt"
+    n = 5
+    result = cli_runner.invoke(cli_generate, ["-n", n, "--filename", fname])
     assert result.exit_code == 0
-    assert "Generated 10 signals and saved to signals.txt" in result.output
+    assert os.path.exists(fname)
+    signals = np.loadtxt(fname)
+    assert signals.shape[0] == n
 
 
 def test_python_generate(tmpdir):
-    generate_signals(n=10, filename=f"{tmpdir}/generated_signals.txt")
-    assert os.path.exists(f"{tmpdir}/generated_signals.txt")
-
+    fname = f"{tmpdir}/generated_signals.txt"
+    n = 10
+    signals = generate_signals(n=n, filename=fname)
+    assert os.path.exists(fname)
+    assert signals.shape[0] == n
