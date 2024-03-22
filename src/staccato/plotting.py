@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from typing import Tuple, List, Optional
 from matplotlib import rcParams
 import torch
-from .nn import Generator
 
 # 1, 2, 3, sigmas
 SIGMA_QUANTS = [0.68, 0.95, 0.99]
@@ -99,7 +98,7 @@ def plot_loss(G_losses: List[float], D_losses: List[float], fname: str= None, ax
 
 
 
-def plot_signals_from_latent_vector(generator: Generator, latent_vector: torch.Tensor, fname: str, **plt_kwgs):
+def plot_signals_from_latent_vector(generator: "Generator", latent_vector: torch.Tensor, fname: str, **plt_kwgs):
     with torch.no_grad():
         fake_signals = generator(latent_vector).detach().cpu()
         plot_waveform_grid(fake_signals, fname=fname, **plt_kwgs)

@@ -1,9 +1,8 @@
 """This module provides the command line interface for the staccato package."""
 import click
 
-from .generate_signals import generate_signals
+from .utils import generate_signals
 from .defaults import GENERATOR_WEIGHTS_FN
-from . import logger
 
 
 @click.command("staccato_generate")

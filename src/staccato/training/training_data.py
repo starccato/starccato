@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from typing import Optional, Tuple
-from .. import logger
+from ..logger import logger
 
 from ..defaults import BATCH_SIZE
 

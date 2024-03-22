@@ -5,20 +5,18 @@ import numpy as np
 import torch
 
 from ..nn import Discriminator, Generator, save_model
-from ..utils import init_weights
 from .training_data import TrainingData
 from ..plotting import plot_signals_from_latent_vector, plot_gradients, plot_loss
 from ..defaults import DEVICE
 from tqdm.auto import trange, tqdm
 import time
 from torch import nn, optim
-from typing import List, NamedTuple
-from .. import logger
+from typing import List
+from ..logger import logger
 
 from torch.optim import lr_scheduler
 from ..defaults import NC, NGF, NZ, BATCH_SIZE, NDF
 
-from collections import namedtuple
 
 
 def _set_seed(seed: int):
@@ -62,9 +60,9 @@ class Trainer:
 
         # setup networks
         self.netG = Generator(nz=nz, ngf=ngf, nc=nc).to(DEVICE)
-        self.netG.apply(init_weights)
+        self.netG.apply(_init_weights)
         self.netD = Discriminator(nz=nz, ndf=ndf, nc=nc).to(DEVICE)
-        self.netD.apply(init_weights)
+        self.netD.apply(_init_weights)
 
         # setup optimisers
         self.optimizerG = optim.Adam(self.netG.parameters(), lr=self.lr_g, betas=(self.beta1, 0.999))
@@ -239,7 +237,21 @@ class TrainMetadata():
         plt.savefig(fname)
 
 
+
+def _init_weights(m: torch.nn.Module) -> None:
+    """This function initialises the weights of the model."""
+    if type(m) == torch.nn.Conv1d or type(m) == torch.nn.ConvTranspose1d:
+        torch.nn.init.normal_(m.weight, 0.0, 0.02)
+    if type(m) == torch.nn.BatchNorm1d:
+        torch.nn.init.normal_(m.weight, 1.0, 0.02)
+        torch.nn.init.zeros_(m.bias)
+
+
+
 def train(**kwargs):
     trainer = Trainer(**kwargs)
     trainer.train()
     return trainer
+
+
+

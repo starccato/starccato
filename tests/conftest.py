@@ -1,7 +1,7 @@
 import os
 import pytest
 import sys
-from staccato import logger
+from staccato.logger import logger
 
 logger.configure(handlers=[{"sink": sys.stdout, "level": "DEBUG"}])
 

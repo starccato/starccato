@@ -1,49 +1,57 @@
+import numpy as np
+
+from .nn import Generator, load_model
+from .defaults import get_default_weights_path, NZ, DEVICE
+
 import torch
-import requests
-import loguru
-from tqdm import tqdm
+from typing import Optional
+import random
+from .logger import logger
+import time
 
 
-
-def __download(url: str, fname: str, msg: str = "Downloading") -> None:
-    response = requests.get(url, stream=True)
-    response.raise_for_status()
-    total_size_in_bytes = int(response.headers.get('content-length', 0))
-    block_size = 1024  # 1 Kibibyte
-    progress_bar = tqdm(
-        total=total_size_in_bytes, unit='iB', unit_scale=True, desc=msg,
-        dynamic_ncols=True
-    )
-    with open(fname, 'wb') as file:
-        for data in response.iter_content(block_size):
-            progress_bar.update(len(data))
-            file.write(data)
-    progress_bar.close()
-    if total_size_in_bytes != 0 and progress_bar.n != total_size_in_bytes:
-        raise Exception(f"Download failed: expected {total_size_in_bytes} bytes, got {progress_bar.n} bytes")
+def _load_generator(weights_file: str = None) -> Generator:
+    """This function loads the generator model from the weights file.
+    See https://pytorch.org/tutorials/beginner/saving_loading_models.html for more details.
+    """
+    if weights_file is None:
+        weights_file = get_default_weights_path()
+    return load_model(Generator, weights_file)
 
 
-def get_device() -> torch.device:
-    """This function returns the device to use for training/predicting."""
-    try:
-        if torch.cuda.is_available():
-            return torch.device("cuda")
-        elif torch.mps.is_available():
-            return torch.device("mps")
-    except Exception as e:
-        pass
-    return torch.device("cpu")
+def generate_signals(
+        n: int = 1,
+        weights_file: Optional[str] = None,
+        seed: Optional[int] = None,
+        filename: Optional[str] = None,
+        nz: Optional[int] = NZ,
+) -> np.ndarray:
+    """This function generates signals using the trained generator model.
 
+    Args:
+        n: The number of signals to generate.
+        weights_file: The path to the weights file for the generator model.
+        seed: The random seed to use for generating the signals. Random if None.
+        filename: The name of the txt file to save the generated signals to.
+    """
 
-def init_weights(m: torch.nn.Module) -> None:
-    """This function initialises the weights of the model."""
-    if type(m) == torch.nn.Conv1d or type(m) == torch.nn.ConvTranspose1d:
-        torch.nn.init.normal_(m.weight, 0.0, 0.02)
-    if type(m) == torch.nn.BatchNorm1d:
-        torch.nn.init.normal_(m.weight, 1.0, 0.02)
-        torch.nn.init.zeros_(m.bias)
+    if seed is not None:
+        random.seed(seed)
+        torch.manual_seed(seed)
 
-def config_logger():
-    logger_format = "{time:DD-MM-YY HH:mm:ss}|<green>STACCATO</green>|{level}| <level>{message}</level>"
-    loguru.logger.configure(handlers=[dict(sink=lambda msg: tqdm.write(msg, end=''), format=logger_format, colorize=True)])
-    return loguru.logger
+    signal_generator = _load_generator(weights_file)
+    latent_vector = torch.randn((n, nz, 1), device=DEVICE)
+
+    t0 = time.time()
+    with torch.no_grad():
+        signals = signal_generator(latent_vector).detach().numpy()
+        signals = signals[:, 0, :]  # from (n, 1, nz) to (n, nz)
+    t = time.time() - t0
+    msg = f"Generated {n} signals [{t:.2f}s]."
+
+    if filename:
+        np.savetxt(filename, signals)
+        msg += f" Saved to {filename}."
+
+    logger.info(msg)
+    return signals
