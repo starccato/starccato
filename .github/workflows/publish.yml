@@ -1,4 +1,4 @@
-name: Publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+name: 📦 and Publish 🐍 to PyPI
 
 on:
   workflow_dispatch:
@@ -16,10 +16,10 @@ jobs:
   build-n-publish:
     environment:
       name: pypi
-      url: https://pypi.org/p/pywavelet
+      url: https://pypi.org/p/starccato
     permissions:
       id-token: write  # Needed for publishing to PyPI
-    name: Build and publish Python 🐍 distributions 📦 to PyPI and TestPyPI
+    name: 📦 and Publish 🐍 to PyPI
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3

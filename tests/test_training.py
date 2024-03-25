@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from starccato.generate_signals import generate_signals
+from starccato import generate_signals
 from starccato.training import TrainingData, train
 
 
