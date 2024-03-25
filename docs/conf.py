@@ -18,7 +18,7 @@ extensions = [
 external_toc_exclude_missing = False
 external_toc_path = "_toc.yml"
 html_baseurl = ""
-html_favicon = ""
+html_favicon = "https://icons8.com/icon/GgALV7LjQj0u/treble-clef"
 html_logo = "_static/logo.png"
 html_sourcelink_suffix = ""
 html_static_path = ["_static"]
@@ -42,6 +42,11 @@ html_theme_options = {
             "type": "fontawesome",
         }
     ],
+    "logo": {
+        "text": "Starccato",
+        "image_light": "_static/logo.png",
+        "image_dark": "_static/logo.png",
+    },
     "show_prev_next": False,
     "footer_start": "copyright",
     "footer_end": "author",
