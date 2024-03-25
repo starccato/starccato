@@ -119,15 +119,19 @@ def plot_signals_ci(signals: np.ndarray, color: str, quantiles: Optional[Tuple[f
         )
     return fig
 
-def overplot_signals(signals: np.ndarray, color: str, axes: plt.Axes = None, alpha=0.001):
+def overplot_signals(signals: np.ndarray,axes: plt.Axes = None, **kwgs):
     """Overplot the signals."""
     if axes is None:
         fig, axes = plt.subplots()
     else:
         fig = axes.get_figure()
 
+    kwgs['alpha'] = kwgs.get('alpha', 0.002)
+    kwgs['color'] = kwgs.get('color', 'k')
+    kwgs['linewidth'] = kwgs.get('linewidth', 0.1)
+
     for s in signals:
-        axes.plot(s, color=color, alpha=alpha)
+        axes.plot(s, **kwgs)
     return fig
 
 
