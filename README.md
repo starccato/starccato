@@ -24,3 +24,14 @@ Ensure unit tests are passing locally and on the CI!
 ```
 pytest tests/
 ```
+
+## Releasing to PyPI
+
+1. Update the version in `setup.py`
+2. Create a tagged commit with the version number
+3. Push the tag to GitHub
+
+```
+git tag -a v0.1.0 -m "v0.1.0"
+git push origin v0.1.0
+```
