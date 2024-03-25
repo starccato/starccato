@@ -10,6 +10,7 @@ def test_cli_generate(cli_runner, tmpdir):
     fname = f"{tmpdir}/generated_signals.txt"
     n = 5
     result = cli_runner.invoke(cli_generate, ["-n", n, "--filename", fname])
+    print(result)
     assert result.exit_code == 0
     assert os.path.exists(fname)
     signals = np.loadtxt(fname)

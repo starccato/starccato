@@ -50,6 +50,9 @@ html_theme_options = {
     "show_prev_next": False,
     "footer_start": "copyright",
     "footer_end": "author",
+    "navbar_start": ["navbar-logo", "navbar-nav"],
+    "navbar_center": [],
+    "navbar_end": ["navbar-icon-links"],
 }
 html_title = "Starccato"
 html_context = {
