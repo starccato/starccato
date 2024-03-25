@@ -16,7 +16,7 @@ pip install starccato
 ## Paper
 
 The paper for starccato can be found [here](https://arxiv.org/abs/2109.14889).
-Code to generate the plots for the paper are available [here](paper_plots.ipynb) 
+Code to generate the plots for the paper are available [here](paper_plots.ipynb)
 
 
 ## Acknowledging starccato

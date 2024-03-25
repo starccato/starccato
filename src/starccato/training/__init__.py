@@ -1,2 +1,2 @@
-from .training_data import TrainingData
 from .trainer import train
+from .training_data import TrainingData

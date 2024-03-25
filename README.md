@@ -20,7 +20,7 @@ pip install -e .[dev]
 pre-commit install
 ```
 
-Ensure unit tests are passing locally and on the CI! 
+Ensure unit tests are passing locally and on the CI!
 ```
 pytest tests/
 ```

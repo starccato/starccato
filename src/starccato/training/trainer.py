@@ -1,22 +1,23 @@
 import os
+import time
+from typing import List
 
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
-
-from ..nn import Discriminator, Generator, save_model
-from .training_data import TrainingData
-from ..plotting import plot_signals_from_latent_vector, plot_gradients, plot_loss
-from ..defaults import DEVICE
-from tqdm.auto import trange, tqdm
-import time
 from torch import nn, optim
-from typing import List
-from ..logger import logger
-
 from torch.optim import lr_scheduler
-from ..defaults import NC, NGF, NZ, BATCH_SIZE, NDF
+from tqdm.auto import tqdm, trange
 
+from ..defaults import BATCH_SIZE, DEVICE, NC, NDF, NGF, NZ
+from ..logger import logger
+from ..nn import Discriminator, Generator, save_model
+from ..plotting import (
+    plot_gradients,
+    plot_loss,
+    plot_signals_from_latent_vector,
+)
+from .training_data import TrainingData
 
 
 def _set_seed(seed: int):
@@ -25,21 +26,22 @@ def _set_seed(seed: int):
     torch.use_deterministic_algorithms(True)  # Needed for reproducible results
     return seed
 
+
 class Trainer:
     def __init__(
-            self,
-            nz: int = NZ,
-            nc: int = NC,
-            ngf: int = NGF,
-            ndf: int = NDF,
-            seed: int = 99,
-            batch_size: int = BATCH_SIZE,
-            num_epochs=128,
-            lr_g=0.00002,
-            lr_d=0.00002,
-            beta1=0.5,
-            checkpoint_interval=16,
-            outdir: str = "outdir"
+        self,
+        nz: int = NZ,
+        nc: int = NC,
+        ngf: int = NGF,
+        ndf: int = NDF,
+        seed: int = 99,
+        batch_size: int = BATCH_SIZE,
+        num_epochs=128,
+        lr_g=0.00002,
+        lr_d=0.00002,
+        beta1=0.5,
+        checkpoint_interval=16,
+        outdir: str = "outdir",
     ):
         self.nz = nz
         self.nc = nc
@@ -65,11 +67,19 @@ class Trainer:
         self.netD.apply(_init_weights)
 
         # setup optimisers
-        self.optimizerG = optim.Adam(self.netG.parameters(), lr=self.lr_g, betas=(self.beta1, 0.999))
-        self.optimizerD = optim.Adam(self.netD.parameters(), lr=self.lr_d, betas=(self.beta1, 0.999))
+        self.optimizerG = optim.Adam(
+            self.netG.parameters(), lr=self.lr_g, betas=(self.beta1, 0.999)
+        )
+        self.optimizerD = optim.Adam(
+            self.netD.parameters(), lr=self.lr_d, betas=(self.beta1, 0.999)
+        )
         sched_kwargs = dict(start_factor=1.0, end_factor=0.5, total_iters=32)
-        self.schedulerG = lr_scheduler.LinearLR(self.optimizerG, **sched_kwargs)
-        self.schedulerD = lr_scheduler.LinearLR(self.optimizerD, **sched_kwargs)
+        self.schedulerG = lr_scheduler.LinearLR(
+            self.optimizerG, **sched_kwargs
+        )
+        self.schedulerD = lr_scheduler.LinearLR(
+            self.optimizerD, **sched_kwargs
+        )
         self.criterion = nn.BCELoss()
 
         # cache a latent-vector for visualisation/testing
@@ -81,21 +91,25 @@ class Trainer:
     @property
     def plt_kwgs(self):
         return dict(
-            scaling_factor=self.dataset.scaling_factor, mean=self.dataset.mean, std=self.dataset.std,
-            num_cols=4, num_rows=4
+            scaling_factor=self.dataset.scaling_factor,
+            mean=self.dataset.mean,
+            std=self.dataset.std,
+            num_cols=4,
+            num_rows=4,
         )
 
     def plot_signals(self, label):
         plot_signals_from_latent_vector(
-            self.netG, self.fixed_noise,
+            self.netG,
+            self.fixed_noise,
             f"{self.outdir}/{label}.png",
-            **self.plt_kwgs
+            **self.plt_kwgs,
         )
 
     def _prog_dict(self, loss_g, loss_d, lr_g, lr_d):
         return {
             "Loss(d,g)": f"[{loss_d:.2E}, {loss_g:.2E}]",
-            "LR(d,g)": f"[{lr_d:.2E}, {lr_g:.2E}]"
+            "LR(d,g)": f"[{lr_d:.2E}, {lr_g:.2E}]",
         }
 
     def train(self):
@@ -109,31 +123,59 @@ class Trainer:
         )
 
         dataloader = self.dataset.get_loader()
-        epoch_bar = trange(self.num_epochs, desc="Epochs", position=0, leave=True)
+        epoch_bar = trange(
+            self.num_epochs, desc="Epochs", position=0, leave=True
+        )
         epoch_bar.set_postfix(self._prog_dict(0, 0, self.lr_g, self.lr_d))
         for epoch in epoch_bar:
-            for (i, data) in tqdm(enumerate(dataloader, 0), desc="Batch", position=1, leave=False,
-                                  total=len(dataloader)):
-                errD, D_x, D_G_z1, _dgrad, fake, b_size = self._update_discriminator(data)
+            for (i, data) in tqdm(
+                enumerate(dataloader, 0),
+                desc="Batch",
+                position=1,
+                leave=False,
+                total=len(dataloader),
+            ):
+                (
+                    errD,
+                    D_x,
+                    D_G_z1,
+                    _dgrad,
+                    fake,
+                    b_size,
+                ) = self._update_discriminator(data)
                 errG, D_G_z2, _ggrad = self._update_generator(b_size, fake)
                 if i % 50 == 0:
-                    epoch_bar.set_postfix(self._prog_dict(errG.item(), errD.item(), self.lr_g, self.lr_d))
+                    epoch_bar.set_postfix(
+                        self._prog_dict(
+                            errG.item(), errD.item(), self.lr_g, self.lr_d
+                        )
+                    )
                 itr = epoch * len(dataloader) + i
-                self.train_metadata.append(itr, errG.item(), errD.item(), _ggrad, _dgrad)
+                self.train_metadata.append(
+                    itr, errG.item(), errD.item(), _ggrad, _dgrad
+                )
 
             # learning-rate decay
-            self._decay_learning_rate(self.optimizerD, self.schedulerD, "Discriminator")
-            self._decay_learning_rate(self.optimizerG, self.schedulerG, "Generator")
+            self._decay_learning_rate(
+                self.optimizerD, self.schedulerD, "Discriminator"
+            )
+            self._decay_learning_rate(
+                self.optimizerG, self.schedulerG, "Generator"
+            )
 
             # @TODO save model+plots every N epochs
             if epoch % self.checkpoint_interval == 0:
                 self.plot_signals(f"signals_epoch_{epoch}")
-                self.train_metadata.plot(f"{self.outdir}/training_metrics_epoch_{epoch}.png")
+                self.train_metadata.plot(
+                    f"{self.outdir}/training_metrics_epoch_{epoch}.png"
+                )
 
         runtime = (time.time() - t0) / 60
         logger.info(f"Training Time: {runtime:.2f}min")
         self.plot_signals(f"signals_epoch_end")
-        self.train_metadata.plot(f"{self.outdir}/training_metrics_epoch_end.png")
+        self.train_metadata.plot(
+            f"{self.outdir}/training_metrics_epoch_end.png"
+        )
         self.save_models()
 
     @property
@@ -209,7 +251,7 @@ class Trainer:
         return after_lr
 
 
-class TrainMetadata():
+class TrainMetadata:
     def __init__(self):
         self.iter: List[int] = []
         self.g_loss: List[float] = []
@@ -224,18 +266,15 @@ class TrainMetadata():
         self.g_gradient.append(g_gradient)
         self.d_gradient.append(d_gradient)
 
-    def plot(self, fname='training_metrics.png'):
+    def plot(self, fname="training_metrics.png"):
         fig, axes = plt.subplots(3, 1, figsize=(10, 6))
-        plot_gradients(self.d_gradient, "tab:red", "Discriminator", axes=axes[0])
-        plot_gradients(self.g_gradient, "tab:blue", "Generator", axes=axes[1])
-        plot_loss(
-            self.g_loss,
-            self.d_loss,
-            axes=axes[2]
+        plot_gradients(
+            self.d_gradient, "tab:red", "Discriminator", axes=axes[0]
         )
+        plot_gradients(self.g_gradient, "tab:blue", "Generator", axes=axes[1])
+        plot_loss(self.g_loss, self.d_loss, axes=axes[2])
         plt.tight_layout()
         plt.savefig(fname)
-
 
 
 def _init_weights(m: torch.nn.Module) -> None:
@@ -247,11 +286,7 @@ def _init_weights(m: torch.nn.Module) -> None:
         torch.nn.init.zeros_(m.bias)
 
 
-
 def train(**kwargs):
     trainer = Trainer(**kwargs)
     trainer.train()
     return trainer
-
-
-

@@ -1,13 +1,13 @@
-import numpy as np
-
-from .nn import Generator, load_model
-from .defaults import get_default_weights_path, NZ, DEVICE
-
-import torch
-from typing import Optional
 import random
-from .logger import logger
 import time
+from typing import Optional
+
+import numpy as np
+import torch
+
+from .defaults import DEVICE, NZ, get_default_weights_path
+from .logger import logger
+from .nn import Generator, load_model
 
 
 def _load_generator(weights_file: str = None) -> Generator:
@@ -20,11 +20,11 @@ def _load_generator(weights_file: str = None) -> Generator:
 
 
 def generate_signals(
-        n: int = 1,
-        weights_file: Optional[str] = None,
-        seed: Optional[int] = None,
-        filename: Optional[str] = None,
-        nz: Optional[int] = NZ,
+    n: int = 1,
+    weights_file: Optional[str] = None,
+    seed: Optional[int] = None,
+    filename: Optional[str] = None,
+    nz: Optional[int] = NZ,
 ) -> np.ndarray:
     """This function generates signals using the trained generator model.
 

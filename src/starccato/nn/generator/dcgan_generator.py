@@ -1,5 +1,6 @@
-import torch.nn as nn
 import torch
+import torch.nn as nn
+
 from ...defaults import NC, NGF, NZ
 
 __all__ = ["Generator"]
@@ -7,6 +8,7 @@ __all__ = ["Generator"]
 
 TRUE = 1
 FALSE = 0
+
 
 class Generator(nn.Module):
     def __init__(self, nz: int = NZ, ngf: int = NGF, nc: int = NC):

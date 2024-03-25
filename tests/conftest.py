@@ -1,6 +1,8 @@
 import os
-import pytest
 import sys
+
+import pytest
+
 from starccato.logger import logger
 
 logger.configure(handlers=[{"sink": sys.stdout, "level": "DEBUG"}])

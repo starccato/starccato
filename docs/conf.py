@@ -1,4 +1,3 @@
-
 author = "Tarin E., Matt E."
 copyright = "2024"
 exclude_patterns = ["**.ipynb_checkpoints", ".DS_Store", "Thumbs.db", "_build"]
@@ -30,7 +29,10 @@ html_theme_options = {
     "analytics": {"google_analytics_id": ""},
     "use_edit_page_button": False,
     "external_links": [
-        {"name": "Paper", "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"},
+        {
+            "name": "Paper",
+            "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        },
     ],
     "icon_links": [
         {
@@ -43,7 +45,6 @@ html_theme_options = {
     "show_prev_next": False,
     "footer_start": "copyright",
     "footer_end": "author",
-
 }
 html_title = "Starccato"
 html_context = {

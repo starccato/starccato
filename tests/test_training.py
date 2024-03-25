@@ -1,9 +1,11 @@
-from starccato.training import TrainingData
 import os
 from unittest.mock import Mock
+
 import pytest
-from starccato.training import train
+
 from starccato.generate_signals import generate_signals
+from starccato.training import TrainingData, train
+
 
 def test_training_data(tmpdir):
     training_data = TrainingData()
@@ -30,7 +32,7 @@ def test_training(mock_training_data, tmpdir):
     weights_fn = f"{train_outdir}/generator_weights.pt"
     assert os.path.exists(weights_fn)
 
-    gen_signals =  f"{tmpdir}/generated_signals.txt"
+    gen_signals = f"{tmpdir}/generated_signals.txt"
     generate_signals(
         n=10,
         weights_file=weights_fn,
