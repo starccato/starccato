@@ -1,4 +1,4 @@
-# Staccato (Stellar Core Collapse GW generator)
+# starccato (Stellar Core Collapse GW generator)
 
 FILL ME DESCRIPTION
 
@@ -6,14 +6,14 @@ FILL ME DESCRIPTION
 ## Installation
 
 ```
-pip install staccato
+pip install starccato
 ```
 
 ## Development
 
 ```
-git clone https://github.com/tarin-e/staccato.git
-cd staccato
+git clone https://github.com/tarin-e/starccato.git
+cd starccato
 pip install -e .[dev]
 pre-commit install
 ```

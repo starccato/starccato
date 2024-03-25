@@ -1,1 +1,49 @@
-# The CI action for running the pytests + checking code coverage
+name: Tests and Coverage
+
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Cache pip packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+
+
+      - name: pytest
+        run: pytest --cov=src/lnl_surrogate/ --cov-report=xml --cov-report=term-missing:skip-covered
+
+      - name: Upload Coverage to Coveralls
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          coverage xml
+          pip install coveralls
+
+          coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

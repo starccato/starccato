@@ -8,13 +8,13 @@ train_models-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]  # list of folders that contain the packages (["."] by default)
-include = ["staccato*"]  # package names should match these glob patterns (["*"] by default)
-exclude = ["staccato.tests*"]  # exclude packages matching these glob patterns (empty by default)
+include = ["starccato*"]  # package names should match these glob patterns (["*"] by default)
+exclude = ["starccato.tests*"]  # exclude packages matching these glob patterns (empty by default)
 namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 
 [project]
-name = "staccato"
+name = "starccato"
 dynamic = ["version"] # scm versioning (using tags)
 requires-python = ">=3.8"
 description = "FILL ME"
@@ -56,9 +56,9 @@ version_file = "src/lnl_surrogate/_version.py"
 
 
 [project.urls]  # Optional
-"Homepage" = "https://github.com/tarin-e/staccato"
-"Bug Reports" = "https://github.com/tarin-e/staccato"
-"Source" = "https://github.com/tarin-e/staccato"
+"Homepage" = "https://github.com/tarin-e/starccato"
+"Bug Reports" = "https://github.com/tarin-e/starccato"
+"Source" = "https://github.com/tarin-e/starccato"
 
 
 
@@ -88,5 +88,5 @@ line_length = 79
 testpaths = ["tests"]
 
 [project.scripts]
-staccato_generate = "staccato.cli:cli_generate"
-staccato_train = "staccato.cli:cli_train"
+starccato_generate = "starccato.cli:cli_generate"
+starccato_train = "starccato.cli:cli_train"

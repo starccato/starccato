@@ -1,6 +1,6 @@
-from staccato.cli import cli_generate
-from staccato.generate_signals import generate_signals
-from staccato.defaults import NZ
+from starccato.cli import cli_generate
+from starccato.generate_signals import generate_signals
+from starccato.defaults import NZ
 import os
 import numpy as np
 

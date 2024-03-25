@@ -1,9 +1,9 @@
-from staccato.training import TrainingData
+from starccato.training import TrainingData
 import os
 from unittest.mock import Mock
 import pytest
-from staccato.training import train
-from staccato.generate_signals import generate_signals
+from starccato.training import train
+from starccato.generate_signals import generate_signals
 
 def test_training_data(tmpdir):
     training_data = TrainingData()
@@ -18,7 +18,7 @@ def test_training_data(tmpdir):
 @pytest.fixture
 def mock_training_data(monkeypatch):
     mock = Mock()
-    monkeypatch.setattr("staccato.training.trainer.TrainingData", mock)
+    monkeypatch.setattr("starccato.training.trainer.TrainingData", mock)
     mock.return_value = TrainingData(frac=0.002, batch_size=1)
     return mock
 

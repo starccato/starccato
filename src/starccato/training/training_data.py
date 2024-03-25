@@ -9,10 +9,11 @@ from ..logger import logger
 
 from ..defaults import BATCH_SIZE
 
-# TODO: @tarin-e, save these on the zenodo as well.
-SIGNALS_CSV = "https://raw.githubusercontent.com/tarin-e/gw-generative-models/main/data/input/richers_1764.csv"
-PARAMETERS_CSV = "https://raw.githubusercontent.com/tarin-e/gw-generative-models/main/data/input/richers_1764_parameters.csv"
-TIME_CSV = "https://raw.githubusercontent.com/tarin-e/gw-generative-models/main/data/input/richers_1764_times.csv"
+# TODO: @tarin-e, release the zenodo DOI
+_ROOT_URL = "https://raw.githubusercontent.com/starccato/data/main/training"
+SIGNALS_CSV = f"{_ROOT_URL}/richers_1764.csv"
+PARAMETERS_CSV = f"{_ROOT_URL}/richers_1764_parameters.csv"
+TIME_CSV = f"{_ROOT_URL}/richers_1764_times.csv"
 
 
 class TrainingData(Dataset):
