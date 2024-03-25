@@ -2,9 +2,8 @@ import os
 
 import numpy as np
 
+from starccato import generate_signals
 from starccato.cli import cli_generate
-from starccato.defaults import NZ
-from starccato.generate_signals import generate_signals
 
 
 def test_cli_generate(cli_runner, tmpdir):
