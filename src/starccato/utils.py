@@ -5,7 +5,12 @@ from typing import Optional
 import numpy as np
 import torch
 
-from .defaults import DEVICE, NZ, get_default_weights_path
+from .defaults import (
+    DEVICE,
+    GENERATOR_WEIGHTS_FN,
+    NZ,
+    get_default_weights_path,
+)
 from .logger import logger
 from .nn import Generator, load_model
 
@@ -14,7 +19,7 @@ def _load_generator(weights_file: str = None) -> Generator:
     """This function loads the generator model from the weights file.
     See https://pytorch.org/tutorials/beginner/saving_loading_models.html for more details.
     """
-    if weights_file is None:
+    if weights_file is None or weights_file == GENERATOR_WEIGHTS_FN:
         weights_file = get_default_weights_path()
     return load_model(Generator, weights_file)
 
