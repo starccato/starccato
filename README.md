@@ -1,4 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/starccato/starccato/badge.svg?branch=main)](https://coveralls.io/github/starccato/starccato?branch=main)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 # starccato (Stellar Core Collapse GW generator)
 
