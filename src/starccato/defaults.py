@@ -1,4 +1,4 @@
-"""Defaults for the staccato package."""
+"""Defaults for the starccato package."""
 import os
 import requests
 from tqdm import tqdm

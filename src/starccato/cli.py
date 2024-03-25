@@ -1,11 +1,11 @@
-"""This module provides the command line interface for the staccato package."""
+"""This module provides the command line interface for the starccato package."""
 import click
 
 from .utils import generate_signals
 from .defaults import GENERATOR_WEIGHTS_FN
 
 
-@click.command("staccato_generate")
+@click.command("starccato_generate")
 @click.option(
     "-n",
     "--n",
