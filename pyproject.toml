@@ -36,7 +36,8 @@ dependencies = [
     "torchvision>=0.15.2",
     "pandas",
     "click",
-    "loguru"
+    "loguru",
+    "matplotlib"
 ]
 
 [project.optional-dependencies]
