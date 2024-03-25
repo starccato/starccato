@@ -37,7 +37,8 @@ dependencies = [
     "pandas",
     "click",
     "loguru",
-    "matplotlib"
+    "matplotlib",
+    "tqdm"
 ]
 
 [project.optional-dependencies]
