@@ -54,13 +54,13 @@ dev = [
 ]
 
 [tool.setuptools_scm]
-version_file = "src/lnl_surrogate/_version.py"
+version_file = "src/starccato/_version.py"
 
 
 [project.urls]  # Optional
-"Homepage" = "https://github.com/tarin-e/starccato"
-"Bug Reports" = "https://github.com/tarin-e/starccato"
-"Source" = "https://github.com/tarin-e/starccato"
+"Homepage" = "https://github.com/starccato/starccato"
+"Bug Reports" = "https://github.com/starccato/starccato"
+"Source" = "https://github.com/starccato/starccato"
 
 
 
