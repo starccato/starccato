@@ -15,9 +15,9 @@ namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [project]
 name = "starccato"
-dynamic = ["version"] # scm versioning (using tags)
+version = "0.0.1"
 requires-python = ">=3.8"
-description = "FILL ME"
+description = "FILL ME" # TODO
 readme = "README.md"
 authors = [
     {name = "Tarin E", email = "tarin@gmail.com" },
@@ -53,8 +53,7 @@ dev = [
     "jupyter-book",
 ]
 
-[tool.setuptools_scm]
-version_file = "src/starccato/_version.py"
+
 
 
 [project.urls]  # Optional

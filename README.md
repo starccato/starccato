@@ -3,7 +3,7 @@
 
 # starccato (Stellar Core Collapse GW generator)
 
-FILL ME DESCRIPTION
+FILL ME DESCRIPTION @TODO
 
 
 ## Installation
@@ -17,7 +17,7 @@ pip install starccato
 ```
 git clone https://github.com/tarin-e/starccato.git
 cd starccato
-pip install -e .[dev]
+pip install -e ".[dev]"
 pre-commit install
 ```
 
@@ -28,9 +28,9 @@ pytest tests/
 
 ## Releasing to PyPI
 
-1. Update the version in `setup.py`
-2. Create a tagged commit with the version number
-3. Push the tag to GitHub
+1. Manually change the version number in `pyproject.toml`  (has to be higher than previous)
+1. Create a tagged commit with the version number 
+2. Push the tag to GitHub
 
 ```
 git tag -a v0.1.0 -m "v0.1.0"
