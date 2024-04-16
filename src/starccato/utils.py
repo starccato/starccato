@@ -25,27 +25,42 @@ def _load_generator(weights_file: str = None) -> Generator:
 
 
 def generate_signals(
-    n: int = 1,
+    n: Optional[int] = 1,
     weights_file: Optional[str] = None,
     seed: Optional[int] = None,
     filename: Optional[str] = None,
-    nz: Optional[int] = NZ,
+    latent_vector: Optional[np.ndarray] = None,
 ) -> np.ndarray:
     """This function generates signals using the trained generator model.
+
+    The signals are generated with fs=4096Hz
+
 
     Args:
         n: The number of signals to generate.
         weights_file: The path to the weights file for the generator model.
         seed: The random seed to use for generating the signals. Random if None.
         filename: The name of the txt file to save the generated signals to.
+        latent_vector: The latent vector to use for generating the signals.
+
+    Returns:
+        The generated signals as a numpy array.
     """
 
     if seed is not None:
         random.seed(seed)
         torch.manual_seed(seed)
 
+    if latent_vector is not None:
+        n, nz = latent_vector.shape
+        assert nz == NZ, f"Expected latent vector of size {NZ}, got {nz}."
+        latent_vector = torch.tensor(latent_vector, device=DEVICE).unsqueeze(
+            -1
+        )
+    else:
+        latent_vector = torch.randn((n, NZ, 1), device=DEVICE)
+
     signal_generator = _load_generator(weights_file)
-    latent_vector = torch.randn((n, nz, 1), device=DEVICE)
 
     t0 = time.time()
     with torch.no_grad():

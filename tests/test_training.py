@@ -40,3 +40,4 @@ def test_training(mock_training_data, tmpdir):
     )
 
     assert os.path.exists(gen_signals)
+
