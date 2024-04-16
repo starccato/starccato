@@ -24,12 +24,11 @@ jobs:
           python-version: 3.8
 
       - name: Install dependencies
-        run: |
-          pip install -r docs/requirements.txt
+        run: pip install -r docs/requirements.txt
 
       # Build the book
       - name: Build the book
-        run: sphinx-build docs/ docs/_build/html -b html
+        run: jupyter-book build docs/
 
       # Push the book's HTML to github-pages
       - name: GitHub Pages action

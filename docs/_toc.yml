@@ -1,6 +1,15 @@
 format: jb-book
 root: index.md
-chapters:
-- file: training.ipynb
-- file: signal_generation.ipynb
-- file: paper_plots.ipynb
+parts:
+  - caption: Examples
+    chapters:
+    - file: training.ipynb
+    - file: signal_generation.ipynb
+    - file: paper_plots.ipynb
+    - file: snr.ipynb
+  - caption: Links
+    chapters:
+    - url: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+      title: Paper
+    - url: https://github.com/starccato/starccato
+      title: Source Code
