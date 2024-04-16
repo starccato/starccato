@@ -1,4 +1,4 @@
-# starccato
+# Starccato
 
 starccato is a Python library for training and using a GAN (Generative Adversarial Network) to generate synthetic GW signals from Stellar core collapse events.
 

@@ -1,0 +1,681 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Signal-to-noise Ratio &#8212; Starccato</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'snr';</script>
+    <link rel="shortcut icon" href="https://icons8.com/icon/GgALV7LjQj0u/treble-clef"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Paper Plots" href="paper_plots.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Starccato - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Starccato - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="signal_generation.html">Signal Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="paper_plots.html">Paper Plots</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Signal-to-noise Ratio</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Links</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Paper</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/starccato/starccato">Source Code</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/starccato/starccato/blob/main/docs/snr.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/starccato/starccato" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/starccato/starccato/issues/new?title=Issue%20on%20page%20%2Fsnr.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/snr.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Signal-to-noise Ratio</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="signal-to-noise-ratio">
+<h1>Signal-to-noise Ratio<a class="headerlink" href="#signal-to-noise-ratio" title="Permalink to this heading">#</a></h1>
+<p>Here we inject a supernova signal into aLIGO colored noise, and calculate the signal-to-noise ratio (SNR) of the signal. The SNR is a measure of how well the signal stands out from the noise.</p>
+<p>We also compute the SNR using a ‘blip’-glitch model for the signal, and compare the two SNR values.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>instal<span class="w"> </span>starccato<span class="w"> </span>bilby<span class="o">[</span>gw<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bilby</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">starccato</span> <span class="kn">import</span> <span class="n">generate_signals</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="s2">&quot;Wswiglal-redir-stdio&quot;</span><span class="p">)</span>
+
+<span class="c1"># Set the duration and sampling frequency of the data segment that we&#39;re going</span>
+<span class="c1"># to inject the signal into.</span>
+<span class="c1"># These are fixed by the resolution in the injection file that we are using.</span>
+
+<span class="n">sampling_frequency</span> <span class="o">=</span> <span class="mi">4096</span>
+<span class="n">n_timestamps</span> <span class="o">=</span> <span class="mi">256</span>
+<span class="n">duration</span> <span class="o">=</span> <span class="n">n_timestamps</span> <span class="o">/</span> <span class="n">sampling_frequency</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">n_timestamps</span><span class="p">)</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="mi">53</span><span class="p">]</span>  <span class="c1"># This is the time of the core-bounce</span>
+
+<span class="c1"># Specify the output directory and the name of the simulation.</span>
+<span class="n">outdir</span> <span class="o">=</span> <span class="s2">&quot;outdir&quot;</span>
+<span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;supernova&quot;</span>
+<span class="n">bilby</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">setup_logger</span><span class="p">(</span><span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+
+<span class="c1"># Set up a random seed for result reproducibility.  This is optional!</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">170801</span><span class="p">)</span>
+
+<span class="c1"># We are going to inject a supernova waveform.  We first establish a dictionary</span>
+<span class="c1"># of parameters that includes all of the different waveform parameters. It will</span>
+<span class="c1"># read in a signal to inject from a txt file.</span>
+
+<span class="n">injection_parameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">luminosity_distance</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># kpc</span>
+    <span class="n">geocent_time</span><span class="o">=</span><span class="mf">1126259642.413</span><span class="p">,</span>
+    <span class="n">ra</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">dec</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">psi</span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">supernova</span><span class="p">(</span><span class="n">time_array</span><span class="p">,</span> <span class="n">luminosity_distance</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A source model that reads a simulation from a text file.</span>
+
+<span class="sd">    This was originally intended for use with supernova simulations, but can</span>
+<span class="sd">    be applied to any source class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frequency_array: array-like</span>
+<span class="sd">        Unused (but required by the source model interface)</span>
+<span class="sd">    file_path: str</span>
+<span class="sd">        Path to the file containing the NR simulation. The format of this file</span>
+<span class="sd">        should be readable by :code:`numpy.loadtxt` and have four columns</span>
+<span class="sd">        containing the real and imaginary components of the plus and cross</span>
+<span class="sd">        polarizations.</span>
+<span class="sd">    luminosity_distance: float</span>
+<span class="sd">        The distance to the source in kpc, this scales the amplitude of the</span>
+<span class="sd">        signal. The simulation is assumed to be at 10kpc.</span>
+<span class="sd">    kwargs:</span>
+<span class="sd">        extra keyword arguments, this should include the :code:`file_path`</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict:</span>
+<span class="sd">        A dictionary containing the plus and cross components of the signal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">waveform</span> <span class="o">=</span> <span class="n">generate_signals</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># waveforms generated at 10kpc, so scale to the luminosity distance</span>
+    <span class="n">scaling</span> <span class="o">=</span> <span class="mf">1e-21</span> <span class="o">*</span> <span class="p">(</span><span class="mf">10.0</span> <span class="o">/</span> <span class="n">luminosity_distance</span><span class="p">)</span>
+
+    <span class="c1"># idk if the signal is hcross/hplus, so we just duplicate for now... #TODO</span>
+    <span class="n">h_plus</span> <span class="o">=</span> <span class="n">scaling</span> <span class="o">*</span> <span class="n">waveform</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;plus&#39;</span><span class="p">:</span> <span class="n">h_plus</span><span class="p">,</span> <span class="s1">&#39;cross&#39;</span><span class="p">:</span> <span class="n">h_plus</span><span class="p">}</span>
+
+
+<span class="c1"># Create the waveform_generator using a supernova source function</span>
+<span class="n">waveform_generator</span> <span class="o">=</span> <span class="n">bilby</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">waveform_generator</span><span class="o">.</span><span class="n">WaveformGenerator</span><span class="p">(</span>
+    <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span>
+    <span class="n">sampling_frequency</span><span class="o">=</span><span class="n">sampling_frequency</span><span class="p">,</span>
+    <span class="n">time_domain_source_model</span><span class="o">=</span><span class="n">supernova</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="n">injection_parameters</span><span class="p">,</span>
+    <span class="n">parameter_conversion</span><span class="o">=</span><span class="k">lambda</span> <span class="n">parameters</span><span class="p">:</span> <span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="nb">list</span><span class="p">()),</span>
+    <span class="n">waveform_arguments</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1"># Set up interferometers (LIGO-Hanford (H1) and LIGO-Livingston (L1))</span>
+<span class="n">ifos</span> <span class="o">=</span> <span class="n">bilby</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">detector</span><span class="o">.</span><span class="n">InterferometerList</span><span class="p">([</span><span class="s2">&quot;H1&quot;</span><span class="p">,</span> <span class="s2">&quot;L1&quot;</span><span class="p">])</span>
+<span class="n">ifos</span><span class="o">.</span><span class="n">set_strain_data_from_power_spectral_densities</span><span class="p">(</span>
+    <span class="n">sampling_frequency</span><span class="o">=</span><span class="n">sampling_frequency</span><span class="p">,</span>
+    <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span>
+    <span class="n">start_time</span><span class="o">=</span><span class="n">injection_parameters</span><span class="p">[</span><span class="s2">&quot;geocent_time&quot;</span><span class="p">],</span>
+
+<span class="p">)</span>
+
+<span class="n">injection_strain_time</span> <span class="o">=</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">time_domain_strain</span><span class="p">(</span><span class="n">injection_parameters</span><span class="p">)</span>
+<span class="n">injection_strain</span> <span class="o">=</span> <span class="n">waveform_generator</span><span class="o">.</span><span class="n">frequency_domain_strain</span><span class="p">(</span><span class="n">injection_parameters</span><span class="p">)</span>
+
+<span class="n">ifos</span><span class="o">.</span><span class="n">inject_signal</span><span class="p">(</span>
+    <span class="n">injection_polarizations</span><span class="o">=</span><span class="n">injection_strain</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="n">injection_parameters</span><span class="p">,</span>
+    <span class="n">raise_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bilby.gw</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">gwutils</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<span class="n">DATA_COL</span> <span class="o">=</span> <span class="s1">&#39;tab:gray&#39;</span>
+<span class="n">SIGNAL_COL</span> <span class="o">=</span> <span class="s1">&#39;tab:orange&#39;</span>
+<span class="n">PSD_COL</span> <span class="o">=</span> <span class="s1">&#39;black&#39;</span>
+
+<span class="k">def</span> <span class="nf">plot_freq_domain</span><span class="p">(</span><span class="n">ifo</span><span class="p">:</span> <span class="n">bilby</span><span class="o">.</span><span class="n">gw</span><span class="o">.</span><span class="n">detector</span><span class="o">.</span><span class="n">Interferometer</span><span class="p">,</span> <span class="n">freq_signal</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">asd</span> <span class="o">=</span> <span class="n">gwutils</span><span class="o">.</span><span class="n">asd_from_freq_series</span><span class="p">(</span>
+        <span class="n">freq_data</span><span class="o">=</span><span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_domain_strain</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_array</span><span class="p">[</span><span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_mask</span><span class="p">],</span>
+              <span class="n">asd</span><span class="p">[</span><span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_mask</span><span class="p">],</span>
+              <span class="n">color</span><span class="o">=</span><span class="n">DATA_COL</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ifo</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> Data&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_array</span><span class="p">[</span><span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_mask</span><span class="p">],</span>
+              <span class="n">ifo</span><span class="o">.</span><span class="n">amplitude_spectral_density_array</span><span class="p">[</span><span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_mask</span><span class="p">],</span>
+              <span class="n">color</span><span class="o">=</span><span class="n">PSD_COL</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">ifo</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; ASD&#39;</span><span class="p">)</span>
+
+    <span class="n">signal_asd</span> <span class="o">=</span> <span class="n">gwutils</span><span class="o">.</span><span class="n">asd_from_freq_series</span><span class="p">(</span>
+        <span class="n">freq_data</span><span class="o">=</span><span class="n">freq_signal</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_array</span><span class="p">[</span><span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_mask</span><span class="p">],</span>
+              <span class="n">signal_asd</span><span class="p">[</span><span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">frequency_mask</span><span class="p">],</span>
+              <span class="n">color</span><span class="o">=</span><span class="n">SIGNAL_COL</span><span class="p">,</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Signal (SNR: </span><span class="si">{</span><span class="n">ifo</span><span class="o">.</span><span class="n">meta_data</span><span class="p">[</span><span class="s2">&quot;optimal_SNR&quot;</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Strain [strain/$\sqrt{\rm Hz}$]&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Frequency [Hz]&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">plot_time_domain</span><span class="p">(</span><span class="n">ifo</span><span class="p">,</span> <span class="n">time_signal</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">strain</span> <span class="o">=</span> <span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">time_domain_strain</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">start_time</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">ifo</span><span class="o">.</span><span class="n">strain_data</span><span class="o">.</span><span class="n">time_array</span> <span class="o">-</span> <span class="n">t0</span>
+    <span class="n">xlabel</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;GPS time [s] - </span><span class="si">{</span><span class="n">t0</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="c1"># unroll raw data</span>
+    <span class="n">strain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">roll</span><span class="p">(</span><span class="n">strain</span><span class="p">,</span> <span class="mi">55</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">strain</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">DATA_COL</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ifo</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> Data&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">time_signal</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">SIGNAL_COL</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Signal (SNR: </span><span class="si">{</span><span class="n">ifo</span><span class="o">.</span><span class="n">meta_data</span><span class="p">[</span><span class="s2">&quot;optimal_SNR&quot;</span><span class="p">]</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Strain&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+
+<span class="n">plot_freq_domain</span><span class="p">(</span><span class="n">ifos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">injection_strain</span><span class="p">[</span><span class="s1">&#39;plus&#39;</span><span class="p">])</span>
+<span class="n">plot_time_domain</span><span class="p">(</span><span class="n">ifos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">injection_strain_time</span><span class="p">[</span><span class="s1">&#39;plus&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/b896b2897bd36e8ee4b1382ea22a6c10d5c433018567ac8546d650b7aebf44e1.png" src="_images/b896b2897bd36e8ee4b1382ea22a6c10d5c433018567ac8546d650b7aebf44e1.png" />
+<img alt="_images/773cb12a9f64324aa55e1f494ad0232435013ae8749f18f862ddf8e27a39a6f8.png" src="_images/773cb12a9f64324aa55e1f494ad0232435013ae8749f18f862ddf8e27a39a6f8.png" />
+</div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="paper_plots.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Paper Plots</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Tarin E., Matt E.
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2024.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
