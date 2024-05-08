@@ -63,6 +63,7 @@ class TrainingData(Dataset):
         self.mean = self.signals.mean()
         self.std = np.std(self.signals, axis=None)
         self.scaling_factor = 5
+        self.max_value = abs(self.signals).max()
         self.ylim_signal = (self.signals[:, :].min(), self.signals[:, :].max())
 
     def __str__(self):
@@ -179,6 +180,7 @@ class TrainingData(Dataset):
         """Display summary stats about the data"""
         str = f"Signal Dataset mean: {self.mean:.3f} +/- {self.std:.3f}\n"
         str += f"Signal Dataset scaling factor (to match noise in generator): {self.scaling_factor}\n"
+        str += f"Signal Dataset max value: {self.max_value}\n"
         str += f"Signal Dataset shape: {self.signals.shape}\n"
         logger.info(str)
 
@@ -186,6 +188,10 @@ class TrainingData(Dataset):
         standardized_signal = (signal - self.mean) / self.std
         standardized_signal = standardized_signal / self.scaling_factor
         return standardized_signal
+
+    def normalise(self, signal):
+        normalised_signal = signal / self.max_value
+        return normalised_signal
 
     def augmentation(self, desired_augmented_data_count):
         while self.signals.shape[1] < desired_augmented_data_count:
@@ -256,9 +262,9 @@ class TrainingData(Dataset):
         signal = self.signals[:, idx]
         signal = signal.reshape(1, -1)
 
-        signal_standardized = self.standardize(signal)
+        normalised_signal = self.normalise(signal)
 
-        return signal_standardized
+        return normalised_signal
 
     def get_loader(self) -> DataLoader:
         return DataLoader(
@@ -269,7 +275,7 @@ class TrainingData(Dataset):
         return next(iter(self.get_loader()))
 
     def plot_waveforms(
-        self, fname=None, standardised=False
+        self, fname=None, normalised=False
     ) -> Tuple[plt.Figure, plt.Axes]:
         fig, axes = plt.subplots(1, 3, figsize=(15, 4))
         axes = axes.flatten()
@@ -280,20 +286,21 @@ class TrainingData(Dataset):
             x = np.arange(signal_iterator.size(dim=2))
             y = signal_iterator[i, :, :].flatten()
 
-            if standardised:
-                y = y * self.scaling_factor
-                y = y * self.std + self.mean
+            if normalised:
+                # y = y * self.scaling_factor
+                # y = y * self.std + self.mean
+                y = y * self.max_value
 
             ax.plot(x, y, color="blue")
 
             ax.axvline(x=53, color="black", linestyle="--", alpha=0.5)
             ax.grid(True)
             ax.set_ylim((-4, 2))
-            if standardised:
+            if normalised:
                 ax.set_ylim(self.ylim_signal)
 
             # Add axis titles
-            ax.set_ylabel("distance * strain (cm^2)")
+            ax.set_ylabel("distance * strain (cm)")
             ax.set_xlabel("n (timestamps)")
             ax.set_xlim(min(x), max(x))
 
@@ -302,8 +309,8 @@ class TrainingData(Dataset):
             # ax.set_xlabel(f'Parameters:\n{parameters_with_names}')
 
         fig.suptitle("Waveforms")
-        if standardised:
-            fig.suptitle("Standardised Waveforms")
+        if normalised:
+            fig.suptitle("Normalised Waveforms")
 
         for i in range(407, 8 * 4):
             fig.delaxes(axes[i])
