@@ -45,5 +45,5 @@ class Discriminator(nn.Module):
     def forward(self, x):
         x = self.main(x)
         x = x.view(x.shape[0], -1)  # Flatten the tensor
-        x = self.fc(x)
-        return x
+        p = self.fc(x)
+        return p
