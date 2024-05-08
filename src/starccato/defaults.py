@@ -5,7 +5,7 @@ import requests
 import torch
 from tqdm import tqdm
 
-NZ = 100
+NZ = 256
 NC = 1
 NGF = 64
 NDF = 64
