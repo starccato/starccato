@@ -94,6 +94,7 @@ class Trainer:
             scaling_factor=self.dataset.scaling_factor,
             mean=self.dataset.mean,
             std=self.dataset.std,
+            max_value=self.dataset.max_value,
             num_cols=4,
             num_rows=4,
         )

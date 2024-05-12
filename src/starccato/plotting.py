@@ -19,6 +19,7 @@ def plot_waveform_grid(
     scaling_factor: float,
     mean: float,
     std: float,
+    max_value: float,
     num_cols: int = 4,
     num_rows: int = 4,
     fname: str = None,
@@ -34,8 +35,9 @@ def plot_waveform_grid(
         x = [i / 4096 for i in range(0, 256)]
         x = [value - (53 / 4096) for value in x]
         y = signals[i, :, :].flatten()
-        y = y * scaling_factor
-        y = y * std + mean
+        # y = y * scaling_factor
+        # y = y * std + mean
+        y = y * max_value
         ax.set_ylim(-600, 300)
         ax.plot(x, y, color="red")
 
