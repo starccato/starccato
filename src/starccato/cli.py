@@ -2,6 +2,7 @@
 import click
 
 from .defaults import GENERATOR_WEIGHTS_FN
+from .training import train
 from .utils import generate_signals
 
 
@@ -41,4 +42,21 @@ def cli_generate(n, weights_file, seed, filename):
     )
 
 
-# @TODO: Add cli-train command (@tarin-e)
+@click.command("starccato_train")
+@click.option(
+    "--outdir",
+    "-o",
+    type=str,
+    default="outdir",
+    help="The directory to save the training output to.",
+)
+@click.option(
+    "--epochs",
+    "-e",
+    type=int,
+    default=8,
+    help="The number of epochs to train the model for.",
+)
+def cli_train(outdir, epochs):
+    """This function trains the generator model."""
+    train(outdir=outdir, num_epochs=epochs)

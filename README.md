@@ -7,11 +7,32 @@
 FILL ME DESCRIPTION @TODO
 
 
+
+
 ## Installation
 
 ```
 pip install starccato
 ```
+
+## Training with starccato
+
+Train the model with the following command:
+```bash
+starccato_train --outdir weights/ --epochs 8
+```
+
+From within python:
+```python
+import starccato
+from starccato.training import train
+
+
+train(outdir="weights/", epochs=8)
+starccato.generate_signals(n=10, weights_file="weights/generator_weights.pth")
+
+```
+
 
 ## Development
 
@@ -30,7 +51,7 @@ pytest tests/
 ## Releasing to PyPI
 
 1. Manually change the version number in `pyproject.toml`  (has to be higher than previous)
-1. Create a tagged commit with the version number 
+1. Create a tagged commit with the version number
 2. Push the tag to GitHub
 
 ```

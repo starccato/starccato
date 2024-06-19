@@ -4,6 +4,9 @@ import numpy as np
 
 from starccato import generate_signals
 from starccato.cli import cli_generate
+from starccato.defaults import _clear_cache
+
+_clear_cache()
 
 
 def test_cli_generate(cli_runner, tmpdir):

@@ -5,6 +5,8 @@ import requests
 import torch
 from tqdm import tqdm
 
+from .logger import logger
+
 NZ = 256
 NC = 1
 NGF = 64
@@ -61,6 +63,12 @@ def get_device() -> torch.device:
     except Exception as e:
         pass
     return torch.device("cpu")
+
+
+def _clear_cache():
+    if os.path.exists(GENERATOR_WEIGHTS_FN):
+        logger.info("Removing cached weights file.")
+        os.remove(GENERATOR_WEIGHTS_FN)
 
 
 DEVICE = get_device()

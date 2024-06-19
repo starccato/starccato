@@ -1,3 +1,4 @@
+import os
 import random
 import time
 from typing import Optional
@@ -21,6 +22,10 @@ def _load_generator(weights_file: str = None) -> Generator:
     """
     if weights_file is None or weights_file == GENERATOR_WEIGHTS_FN:
         weights_file = get_default_weights_path()
+    last_updated = time.ctime(os.path.getmtime(weights_file))
+    logger.debug(
+        f"Loading generator model from {weights_file} (last updated: {last_updated})."
+    )
     return load_model(Generator, weights_file)
 
 
