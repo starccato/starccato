@@ -12,8 +12,8 @@ def test_training_data(tmpdir):
     fname = f"{tmpdir}/training_waveforms.png"
     training_data.plot_waveforms(fname)
     assert os.path.exists(fname)
-    fname = f"{tmpdir}/training_waveform_standardised.png"
-    training_data.plot_waveforms(fname, standardised=True)
+    fname = f"{tmpdir}/training_waveform_normalised.png"
+    training_data.plot_waveforms(fname, normalised=True)
     assert os.path.exists(fname)
 
 
@@ -40,4 +40,3 @@ def test_training(mock_training_data, tmpdir):
     )
 
     assert os.path.exists(gen_signals)
-

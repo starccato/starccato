@@ -67,7 +67,6 @@ class Generator(nn.Module):
             nn.ConvTranspose1d(
                 ngf, nc, kernel_size=4, stride=2, padding=1, bias=False
             ),
-            nn.Tanh(),
         )
 
     def forward(self, z):
