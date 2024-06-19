@@ -10,7 +10,6 @@ from torch.utils.data import DataLoader, Dataset
 from ..defaults import BATCH_SIZE
 from ..logger import logger
 
-# TODO: @tarin-e, release the zenodo DOI
 _ROOT_URL = "https://raw.githubusercontent.com/starccato/data/main/training"
 SIGNALS_CSV = f"{_ROOT_URL}/richers_1764.csv"
 PARAMETERS_CSV = f"{_ROOT_URL}/richers_1764_parameters.csv"
@@ -78,7 +77,6 @@ class TrainingData(Dataset):
 
     ### augmentation methods ###
     def jittering_augmentation(self, signal):
-        # todo: add noise only after time of core bounce
         # noise_start_time = 203
         noise = np.random.normal(0, 1, signal.shape[1])
         jittered_signal = signal + noise

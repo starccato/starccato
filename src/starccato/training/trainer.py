@@ -164,7 +164,6 @@ class Trainer:
                 self.optimizerG, self.schedulerG, "Generator"
             )
 
-            # @TODO save model+plots every N epochs
             if epoch % self.checkpoint_interval == 0:
                 self.plot_signals(f"signals_epoch_{epoch}")
                 self.train_metadata.plot(
@@ -186,7 +185,6 @@ class Trainer:
     def save_models(self):
         save_model(self.netG, self.save_fname)
         logger.info(f"Saved model to {self.save_fname}")
-        # @TODO save discriminator ?
 
     def _update_discriminator(self, data):
         """Update D network: maximize log(D(x)) + log(1 - D(G(z)))"""

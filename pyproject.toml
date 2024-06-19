@@ -15,12 +15,13 @@ namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [project]
 name = "starccato"
-version = "0.0.1"
+version = "0.0.2"
 requires-python = ">=3.8"
-description = "FILL ME" # TODO
+description = "Starccato is a fast stellar core-collapse gravitational wave generator."
 readme = "README.md"
 authors = [
-    {name = "Tarin E", email = "tarin@gmail.com" },
+    {name = "Tarin Eccleston", email = "tarin.eccleston@gmail.com" },
+    {name = "Matthew Edwards", email = "matt.edwards@auckland.ac.nz"}
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",

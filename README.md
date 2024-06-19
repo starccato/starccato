@@ -4,10 +4,7 @@
 
 # starccato (Stellar Core Collapse GW generator)
 
-FILL ME DESCRIPTION @TODO
-
-
-
+Starccato is a fast stellar core-collapse gravitational wave generator.
 
 ## Installation
 
@@ -28,7 +25,7 @@ import starccato
 from starccato.training import train
 
 
-train(outdir="weights/", epochs=8)
+train(outdir="weights/", epochs=128)
 starccato.generate_signals(n=10, weights_file="weights/generator_weights.pth")
 
 ```
