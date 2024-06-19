@@ -431,10 +431,22 @@ document.write(`
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The autoreload extension is already loaded. To reload it, use:
+  %reload_ext autoreload
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>starccato<span class="w"> </span>-q
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Bold">[</span><span class=" -Color -Color-Blue">notice</span><span class=" -Color -Color-Bold">]</span> A new release of pip is available: <span class=" -Color -Color-Red">23.1.2</span> -&gt; <span class=" -Color -Color-Green">24.0</span>
+<span class=" -Color -Color-Bold">[</span><span class=" -Color -Color-Blue">notice</span><span class=" -Color -Color-Bold">]</span> To update, run: <span class=" -Color -Color-Green">/Library/Developer/CommandLineTools/usr/bin/python3 -m pip install --upgrade pip</span>
 </pre></div>
 </div>
 </div>
@@ -447,6 +459,14 @@ document.write(`
 
 <span class="n">training_data</span> <span class="o">=</span> <span class="n">TrainingData</span><span class="p">()</span>
 <span class="n">training_data</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-05-15 16:53:08.633</span> | <span class=" -Color -Color-Bold">INFO    </span> | <span class=" -Color -Color-Cyan">starccato.training.training_data</span>:<span class=" -Color -Color-Cyan">summary</span>:<span class=" -Color -Color-Cyan">183</span> - <span class=" -Color -Color-Bold">Signal Dataset mean: -0.516 +/- 39.724</span>
+<span class=" -Color -Color-Bold">Signal Dataset scaling factor (to match noise in generator): 5</span>
+<span class=" -Color -Color-Bold">Signal Dataset shape: (256, 1684)</span>
+
 </pre></div>
 </div>
 </div>
@@ -469,7 +489,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/53488e98a632e9dd5218bbebf8a1a7805dd293d461f5b3550c299a9403cffddc.png" src="_images/53488e98a632e9dd5218bbebf8a1a7805dd293d461f5b3550c299a9403cffddc.png" />
+<img alt="_images/d21443528a893e4f666ee740fdf8f34094b95b93523de3ecb6e97ed1009792aa.png" src="_images/d21443528a893e4f666ee740fdf8f34094b95b93523de3ecb6e97ed1009792aa.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -481,7 +501,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/e1c086d2cff6f820fc5c03e0c4280a30af219ccb822f1d60eeb6b8a0bf4cd6d9.png" src="_images/e1c086d2cff6f820fc5c03e0c4280a30af219ccb822f1d60eeb6b8a0bf4cd6d9.png" />
+<img alt="_images/cf49d8d069ed8a96b2ab2d492f783632f799d7f60a1dc2fa2ca8bfa9c37845ed.png" src="_images/cf49d8d069ed8a96b2ab2d492f783632f799d7f60a1dc2fa2ca8bfa9c37845ed.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -491,7 +511,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9c123c95c0a7a0d2aa8edd5fed4da5ebcd72ec2ff2268c8bc2b365e567dd2818.png" src="_images/9c123c95c0a7a0d2aa8edd5fed4da5ebcd72ec2ff2268c8bc2b365e567dd2818.png" />
+<img alt="_images/15aefce9c8697dbb100cb0042c8dd6cea84f790f2726dffa065ab223381437a4.png" src="_images/15aefce9c8697dbb100cb0042c8dd6cea84f790f2726dffa065ab223381437a4.png" />
 </div>
 </div>
 </section>
@@ -503,9 +523,42 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">starccato.training</span> <span class="kn">import</span> <span class="n">train</span>
 
-<span class="n">result</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">num_epochs</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/tarineccleston/Library/Python/3.9/lib/python/site-packages/torch/nn/modules/lazy.py:180: UserWarning: Lazy modules are a new feature under heavy development so changes to the API or functionality can happen at any moment.
+  warnings.warn(&#39;Lazy modules are a new feature under heavy development &#39;
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-05-15 16:53:14.751</span> | <span class=" -Color -Color-Bold">INFO    </span> | <span class=" -Color -Color-Cyan">starccato.training.trainer</span>:<span class=" -Color -Color-Cyan">train</span>:<span class=" -Color -Color-Cyan">118</span> - 
+<span class=" -Color -Color-Bold">Starting Training Loop [Epochs: 8, Train Size: (256, 1684), Learning Rate: (2e-05, 2e-05)]</span>
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "967612209f844fd6bd843f5b94aacaa2", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "f22d6957f7a74ead9af32b60f1160492", "version_major": 2, "version_minor": 0}</script><div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/tarineccleston/Library/Python/3.9/lib/python/site-packages/starccato/plotting.py:92: UserWarning: Tight layout not applied. tight_layout cannot make axes height small enough to accommodate all axes decorations.
+  plt.tight_layout()
+/Users/tarineccleston/Library/Python/3.9/lib/python/site-packages/starccato/plotting.py:92: UserWarning: The figure layout has changed to tight
+  plt.tight_layout()
+/Users/tarineccleston/Library/Python/3.9/lib/python/site-packages/starccato/plotting.py:120: UserWarning: Tight layout not applied. tight_layout cannot make axes height small enough to accommodate all axes decorations.
+  plt.tight_layout()
+/Users/tarineccleston/Library/Python/3.9/lib/python/site-packages/starccato/plotting.py:120: UserWarning: The figure layout has changed to tight
+  plt.tight_layout()
+/Users/tarineccleston/Library/Python/3.9/lib/python/site-packages/starccato/training/trainer.py:276: UserWarning: Tight layout not applied. tight_layout cannot make axes height small enough to accommodate all axes decorations.
+  plt.tight_layout()
+/Users/tarineccleston/Library/Python/3.9/lib/python/site-packages/starccato/training/trainer.py:276: UserWarning: The figure layout has changed to tight
+  plt.tight_layout()
+</pre></div>
+</div>
+<script type="application/vnd.jupyter.widget-view+json">{"model_id": "c00bdbc97eaf48708800e11d11e89cca", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "9e39b88b247845059ee09e8aef6e59ca", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "091ad5ea1c5c47f59043fa2c6858a04c", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "c535e85db328471ba916bea6de0ff4b7", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "2ec9ed7c57004b1890caa84a4253e1e5", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "04bcd9d7b2f544b387a838c3a4e25d6a", "version_major": 2, "version_minor": 0}</script><script type="application/vnd.jupyter.widget-view+json">{"model_id": "30f7c225c4f44fdbbe5e719bca332cee", "version_major": 2, "version_minor": 0}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-05-15 16:56:36.204</span> | <span class=" -Color -Color-Bold">INFO    </span> | <span class=" -Color -Color-Cyan">starccato.training.trainer</span>:<span class=" -Color -Color-Cyan">train</span>:<span class=" -Color -Color-Cyan">174</span> - <span class=" -Color -Color-Bold">Training Time: 3.36min</span>
+<span class=" -Color -Color-Green">2024-05-15 16:56:38.610</span> | <span class=" -Color -Color-Bold">INFO    </span> | <span class=" -Color -Color-Cyan">starccato.training.trainer</span>:<span class=" -Color -Color-Cyan">save_models</span>:<span class=" -Color -Color-Cyan">187</span> - <span class=" -Color -Color-Bold">Saved model to outdir/generator_weights.pt</span>
+</pre></div>
+</div>
+<img alt="_images/6c1ffbcf0e258112cfea1799f2e08fe7617a7bdf1f1fe1918e9b7a5f44d9bf87.png" src="_images/6c1ffbcf0e258112cfea1799f2e08fe7617a7bdf1f1fe1918e9b7a5f44d9bf87.png" />
+<img alt="_images/0dc6f8bb35f6510dd58c6b977c57a8962ee0fb980088b16e500cd383c843c3ad.png" src="_images/0dc6f8bb35f6510dd58c6b977c57a8962ee0fb980088b16e500cd383c843c3ad.png" />
+<img alt="_images/cff27844795d3c7e614a5935f798f37da457df120277318bfa41086034d87713.png" src="_images/cff27844795d3c7e614a5935f798f37da457df120277318bfa41086034d87713.png" />
+<img alt="_images/89721a464c7d11d364c6690539b410c5d464789461b78b90d5d682c6ed528102.png" src="_images/89721a464c7d11d364c6690539b410c5d464789461b78b90d5d682c6ed528102.png" />
+<img alt="_images/c6f070cddf56e27b5f13b8138b1e56e133487e528cd6043cb7bfbb69f4808c1f.png" src="_images/c6f070cddf56e27b5f13b8138b1e56e133487e528cd6043cb7bfbb69f4808c1f.png" />
 </div>
 </div>
 </section>

@@ -418,7 +418,7 @@ document.write(`
 <p>This notebook demonstrates the generation of a core-collapse supernova signal using the <code class="docutils literal notranslate"><span class="pre">staccato</span></code> package. We present both the python and the command-line application protocal interfaces (APIs) to generate the signal.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">load_ext</span> autoreload
 <span class="o">%</span><span class="k">autoreload</span> 2
 <span class="o">%</span><span class="k">matplotlib</span> inline
 </pre></div>
@@ -427,7 +427,13 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>starccato<span class="w"> </span>-q
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>starccato<span class="w"> </span>-q
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Bold">[</span><span class=" -Color -Color-Blue">notice</span><span class=" -Color -Color-Bold">]</span> A new release of pip is available: <span class=" -Color -Color-Red">23.1.2</span> -&gt; <span class=" -Color -Color-Green">24.0</span>
+<span class=" -Color -Color-Bold">[</span><span class=" -Color -Color-Blue">notice</span><span class=" -Color -Color-Bold">]</span> To update, run: <span class=" -Color -Color-Green">/Library/Developer/CommandLineTools/usr/bin/python3 -m pip install --upgrade pip</span>
 </pre></div>
 </div>
 </div>
@@ -436,17 +442,25 @@ document.write(`
 <h2>Python API<a class="headerlink" href="#python-api" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">starccato</span> <span class="kn">import</span> <span class="n">generate_signals</span>
 
-<span class="n">signals</span> <span class="o">=</span> <span class="n">generate_signals</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+<span class="n">signals</span> <span class="o">=</span> <span class="n">generate_signals</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">10000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading default weights...: 100%|██████████| 48.0M/48.0M [00:08&lt;00:00, 5.38MiB/s]
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span><span class=" -Color -Color-Green">2024-05-13 00:13:32.146</span> | <span class=" -Color -Color-Bold">INFO    </span> | <span class=" -Color -Color-Cyan">starccato.utils</span>:<span class=" -Color -Color-Cyan">generate_signals</span>:<span class=" -Color -Color-Cyan">61</span> - <span class=" -Color -Color-Bold">Generated 10000 signals [10.35s].</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">starccato.plotting</span> <span class="kn">import</span> <span class="n">overplot_signals</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">starccato.plotting</span> <span class="kn">import</span> <span class="n">overplot_signals</span>
 
 <span class="n">fig</span> <span class="o">=</span> <span class="n">overplot_signals</span><span class="p">(</span><span class="n">signals</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
@@ -462,7 +476,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/772875e5e9545e64586b0b0a9d8250f7bd9f32637d506b57ae6490692c990306.png" src="_images/772875e5e9545e64586b0b0a9d8250f7bd9f32637d506b57ae6490692c990306.png" />
+<img alt="_images/57c12687457e570ca0b3b47c63a77e2afe61fb265c936711326a5eb5fe1f881d.png" src="_images/57c12687457e570ca0b3b47c63a77e2afe61fb265c936711326a5eb5fe1f881d.png" />
 </div>
 </div>
 </section>
